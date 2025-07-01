@@ -1,0 +1,43 @@
+<div class="login-container">
+  <h2>Registro</h2>
+  <form [formGroup]="form" (ngSubmit)="registrar()">
+
+    <!-- Datos básicos -->
+    <input type="text" placeholder="Nombre" formControlName="nombre" />
+    <input type="text" placeholder="Apellido" formControlName="apellido" />
+    <input type="email" placeholder="Email" formControlName="email" />
+    <input type="password" placeholder="Contraseña" formControlName="password" />
+    <input type="text" placeholder="DNI" formControlName="dni" />
+    <input type="date" formControlName="fecha_nacimiento" />
+
+    <!-- Selector de rol -->
+    <div>
+      <label><input type="radio" formControlName="rol" value="paciente" /> Paciente</label>
+      <label><input type="radio" formControlName="rol" value="especialista" /> Especialista</label>
+    </div>
+
+    <!-- Obra Social (solo paciente) -->
+    <div *ngIf="rolSeleccionado === 'paciente'">
+      <input type="text" placeholder="Obra Social" formControlName="obra_social" />
+    </div>
+
+    <!-- Especialidades (solo especialista) -->
+<!-- Especialidades (solo especialista) -->
+    <div *ngIf="rolSeleccionado === 'especialista'" formArrayName="especialidades">
+    <div *ngFor="let esp of especialidades.controls; let i = index">
+        <input [formControlName]="i" placeholder="Especialidad {{ i + 1 }}" />
+    </div>
+    <button type="button" (click)="agregarEspecialidad()">+ Añadir especialidad</button>
+    </div>
+
+
+    <!-- Subida de imágenes -->
+    <div>
+      <input type="file" (change)="onFileSelected($event)" />
+      <input *ngIf="rolSeleccionado === 'paciente'" type="file" (change)="onFileSelected($event, true)" />
+    </div>
+
+    <button type="submit" [disabled]="form.invalid">Registrarse</button>
+    <div class="error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  </form>
+</div>

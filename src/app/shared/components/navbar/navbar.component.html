@@ -1,0 +1,21 @@
+<div class="navbar-container">
+  <nav class="sidebar">
+    <ng-container *ngIf="!isLoggedIn">
+      <button class="nav-button" routerLink="/login">
+        <i class="fas fa-login"></i> Login
+      </button>
+      <button class="nav-button" routerLink="/registro">
+        <i class="fas fa-registro"></i> Registro
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="isLoggedIn">
+      <button class="nav-button" routerLink="/home">
+        <i class="fas fa-home"></i> Inicio
+      </button>
+      <button class="nav-button" (click)="cerrarSesion()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+      </button>
+    </ng-container>
+  </nav>
+</div>

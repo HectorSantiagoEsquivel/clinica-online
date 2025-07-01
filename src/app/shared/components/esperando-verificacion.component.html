@@ -1,0 +1,15 @@
+<div class="verificacion-container">
+  <h2>Cuenta pendiente de verificación</h2>
+
+  <p *ngIf="rol === 'paciente'">
+    Tu cuenta fue registrada correctamente. Por favor, verificá tu email antes de ingresar.
+  </p>
+
+  <p *ngIf="rol === 'especialista'">
+    Tu cuenta fue registrada correctamente. Debe ser verificada por un administrador y confirmar tu email para poder ingresar.
+  </p>
+
+  <p *ngIf="!rol">
+    Tu cuenta aún no está verificada.
+  </p>
+</div>

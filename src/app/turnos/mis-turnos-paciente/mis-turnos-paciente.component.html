@@ -1,0 +1,62 @@
+<div class="spinner-container" [appSpinner]="cargando"></div>
+
+<section class="listado">
+  <h2>Mis turnos</h2>
+
+  <div class="filtro">
+    <label for="filtro">Filtrar por:</label>
+    <input
+      id="filtro"
+      type="text"
+      [(ngModel)]="filtro"
+      (ngModelChange)="actualizarFiltro($event)"
+      placeholder="Buscar por especialidad o especialista"
+    />
+  </div>
+
+  <div class="turnos">
+    <div class="card" *ngFor="let turno of turnosFiltrados">
+      <div class="card-header">
+        Especialidad: {{ turno.especialidad?.nombre || 'N/A' }}
+      </div>
+
+      <div class="card-body">
+        <h5 class="card-title">
+          Especialista: {{ turno.especialista?.apellido }}, {{ turno.especialista?.nombre }}
+        </h5>
+
+        <p><strong>Fecha:</strong> {{ turno.fecha ? (turno.fecha | date: 'dd/MM/yyyy HH:mm') : 'Sin fecha' }}</p>
+
+        <p *ngIf="turno.estado === 'cancelado' || turno.estado === 'rechazado'">
+          <strong>Comentario:</strong> {{ turno.comentarioCancelacion }}
+        </p>
+
+        <!-- Acciones disponibles -->
+        <button *ngIf="turno.estado !== 'realizado'" (click)="cancelarTurno(turno.id)">Cancelar</button>
+
+        <button *ngIf="turno.resena" (click)="verResena(turno.resena)">Ver Reseña</button>
+
+        <button
+          *ngIf="turno.estado === 'realizado' && turno.resena && !turno.calificaAtencion"
+          (click)="calificarTurno(turno)"
+        >
+          Calificar Atención
+        </button>
+
+        <!-- Mostrar calificación si existe -->
+        <div *ngIf="turno.calificaAtencion" class="calificacion">
+          <strong>Calificación del paciente:</strong> {{ turno.calificaAtencion }}/10
+          <div class="comentario">
+            {{ turno.comentarioCalificacion }}
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer text-muted">
+        Estado: {{ turno.estado }}
+      </div>
+    </div>
+
+    <p *ngIf="!cargando && turnosFiltrados.length === 0">No hay turnos disponibles.</p>
+  </div>
+</section>

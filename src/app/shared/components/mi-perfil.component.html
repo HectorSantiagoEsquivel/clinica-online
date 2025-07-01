@@ -1,0 +1,39 @@
+<section class="perfil">
+  <h2>Mi Perfil</h2>
+
+  <div class="perfil-card" *ngIf="usuario">
+    <div class="imagenes">
+      <img
+        class="img-perfil"
+        *ngIf="usuario.imagen_perfil"
+        [src]="usuario.imagen_perfil"
+        alt="Imagen de perfil"
+      />
+      <img
+        class="img-extra"
+        *ngIf="usuario.imagen_extra"
+        [src]="usuario.imagen_extra"
+        alt=""
+      />
+    </div>
+
+    <div class="datos">
+      <p><strong>Nombre:</strong> {{ usuario.nombre }} {{ usuario.apellido }}</p>
+      <p><strong>Email:</strong> {{ usuario.email }}</p>
+      <p><strong>DNI:</strong> {{ usuario.dni }}</p>
+      <p><strong>Edad:</strong> {{ calcularEdad(usuario.fecha_nacimiento) }}</p>
+      <p><strong>Rol:</strong> {{ usuario.rol }}</p>
+
+      <p *ngIf="usuario.rol === 'paciente' && usuario.obra_social">
+        <strong>Obra social:</strong> {{ usuario.obra_social }}
+      </p>
+
+      <div *ngIf="usuario.rol === 'especialista' && especialidades.length">
+        <p><strong>Especialidades:</strong></p>
+        <ul>
+          <li *ngFor="let esp of especialidades">{{ esp.nombre }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

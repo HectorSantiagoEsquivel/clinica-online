@@ -1,0 +1,41 @@
+<div class="spinner-container" [appSpinner]="cargando"></div>
+
+<section class="listado">
+  <h2>Mis turnos</h2>
+
+  <div class="filtro">
+    <label for="filtro">Filtrar por:</label>
+    <input
+      id="filtro"
+      type="text"
+      [(ngModel)]="filtro"
+      (ngModelChange)="actualizarFiltro($event)"
+      placeholder="Ingrese valor a buscar"
+    />
+  </div>
+  
+
+  <div class="turnos">
+    <div class="card" *ngFor="let turno of turnosFiltrados">
+      <div class="card-header">
+        Especialidad: {{ turno.especialidad?.nombre || 'N/A' }}
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Paciente: {{ turno.paciente?.apellido }}, {{ turno.paciente?.nombre }}</h5>
+        <p><strong>Fecha:</strong> {{ turno.fecha ? (turno.fecha | date: 'dd/MM/yyyy HH:mm') : 'Sin fecha' }}</p>
+        <p *ngIf="turno.estado === 'cancelado' || turno.estado === 'rechazado'">
+          <strong>Comentario:</strong> {{ turno.comentarioCancelacion }}
+        </p>
+        <button *ngIf="turno.estado === 'pendiente'" (click)="aceptarTurno(turno.id)">Aceptar</button>
+        <button *ngIf="turno.estado === 'pendiente'" (click)="rechazarTurno(turno.id)">Rechazar</button>
+        <button *ngIf="turno.estado === 'aceptado'" (click)="finalizarTurno(turno.id)">Finalizar</button>
+        <button *ngIf="turno.resena" (click)="verResena(turno.resena)">Ver Reseña</button>
+      </div>
+      <div class="card-footer text-muted">
+        Estado: {{ turno.estado }}
+      </div>
+       <p *ngIf="!cargando && turnosFiltrados.length === 0">No hay turnos disponibles.</p>
+
+    </div>
+  </div>
+</section>

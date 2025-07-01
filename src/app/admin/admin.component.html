@@ -1,0 +1,74 @@
+<h2>Administración de Usuarios</h2>
+
+<!-- Contenedor de pestañas -->
+<div class="tabs">
+  <button [class.active]="tabActiva === 'lista'" (click)="tabActiva = 'lista'">Usuarios</button>
+  <button [class.active]="tabActiva === 'crear'" (click)="tabActiva = 'crear'">Crear usuario</button>
+</div>
+
+<!-- SECCIÓN 1: LISTADO -->
+<section class="seccion" *ngIf="tabActiva === 'lista'">
+  <h3>Listado de usuarios</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Rol</th>
+        <th>Email</th>
+        <th>Verificado</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+        <td>{{ usuario.rol }}</td>
+        <td>{{ usuario.email }}</td>
+        <td>{{ usuario.verificado ? 'Sí' : 'No' }}</td>
+        <td>
+          <button *ngIf="usuario.rol === 'especialista'" (click)="cambiarVerificacion(usuario)">
+            {{ usuario.verificado ? 'Inhabilitar' : 'Habilitar' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- SECCIÓN 2: CREAR USUARIO -->
+<section class="seccion" *ngIf="tabActiva === 'crear'">
+  <h3>Crear nuevo usuario</h3>
+  <form [formGroup]="crearForm" (ngSubmit)="crearUsuario()">
+
+    <input formControlName="nombre" placeholder="Nombre" />
+    <input formControlName="apellido" placeholder="Apellido" />
+    <input formControlName="email" type="email" placeholder="Email" />
+    <input formControlName="password" type="password" placeholder="Contraseña" />
+    <input formControlName="dni" placeholder="DNI" />
+    <input formControlName="fecha_nacimiento" type="date" />
+
+    <select formControlName="rol">
+      <option value="paciente">Paciente</option>
+      <option value="especialista">Especialista</option>
+      <option value="admin">Administrador</option>
+    </select>
+
+    <!-- Obra social (solo para pacientes) -->
+    <input *ngIf="crearForm.value.rol === 'paciente'" formControlName="obra_social" placeholder="Obra social" />
+
+    <!-- Especialidades (solo para especialistas) -->
+    <div *ngIf="crearForm.value.rol === 'especialista'" formArrayName="especialidades">
+      <div *ngFor="let esp of especialidades.controls; let i = index">
+        <input [formControlName]="i" placeholder="Especialidad {{ i + 1 }}" />
+      </div>
+      <button type="button" (click)="agregarEspecialidad()">+ Añadir especialidad</button>
+    </div>
+
+    <input type="file" (change)="onFileSelected($event)" />
+
+    <button type="submit">Crear usuario</button>
+  </form>
+
+  <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
+  <p *ngIf="successMsg" class="success">{{ successMsg }}</p>
+</section>

@@ -1,0 +1,155 @@
+// Variables de color y tipografía para consistencia
+$primary-color: #2c3e50;
+$secondary-color: #009688;
+$background-color: #f8f9fa;
+$card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+$border-radius: 10px;
+$transition: all 0.3s ease;
+
+.listado {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+
+  h2 {
+    color: $primary-color;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 0.5rem;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: $secondary-color;
+    }
+  }
+
+  .filtro {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-weight: 600;
+      color: $primary-color;
+      font-size: 1rem;
+    }
+
+    input {
+      padding: 0.75rem;
+      border: 1px solid #e0e0e0;
+      border-radius: $border-radius;
+      font-size: 1rem;
+      transition: $transition;
+      width: 100%;
+      max-width: 400px;
+
+      &:focus {
+        outline: none;
+        border-color: $secondary-color;
+        box-shadow: 0 0 0 2px rgba($secondary-color, 0.2);
+      }
+
+      &::placeholder {
+        color: #aaa;
+      }
+    }
+  }
+
+  .turnos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+
+    .card {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: $border-radius;
+      box-shadow: $card-shadow;
+      transition: $transition;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .card-header {
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: $primary-color;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .card-body {
+        flex-grow: 1;
+
+        .card-title {
+          font-size: 1rem;
+          color: #555;
+          margin-bottom: 0.75rem;
+        }
+
+        p {
+          margin: 0.5rem 0;
+          line-height: 1.5;
+          color: #666;
+
+          strong {
+            color: $primary-color;
+            font-weight: 600;
+          }
+        }
+
+        button {
+          margin-right: 0.75rem;
+          margin-top: 1rem;
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 6px;
+          background-color: $secondary-color;
+          color: white;
+          font-weight: 500;
+          cursor: pointer;
+          transition: $transition;
+
+          &:hover {
+            background-color: darken($secondary-color, 10%);
+          }
+        }
+      }
+
+      .card-footer {
+        font-style: italic;
+        color: #888;
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #eee;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Estilos para el spinner
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}

@@ -1,0 +1,176 @@
+.listado {
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  h2 {
+    color: #2e2e2e;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  .filtro {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      padding: 0.6rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+
+      &:focus {
+        border-color: #0077cc;
+        outline: none;
+        box-shadow: 0 0 4px rgba(0, 119, 204, 0.3);
+      }
+    }
+  }
+
+  .turnos {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .card {
+      background-color: #ffffff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: translateY(-3px);
+      }
+
+      .card-header {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+        color: #555;
+      }
+
+      .card-body {
+        .card-title {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #333;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          margin: 0.4rem 0;
+          color: #444;
+        }
+
+        button {
+          margin-right: 0.6rem;
+          margin-top: 0.6rem;
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 8px;
+          background-color: #0077cc;
+          color: #fff;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.3s ease, transform 0.2s ease;
+
+          &:hover {
+            background-color: #005fa3;
+            transform: translateY(-1px);
+          }
+
+          &:disabled {
+            background-color: #bbb;
+            cursor: not-allowed;
+            transform: none;
+          }
+        }
+      }
+
+      .card-footer {
+        margin-top: 1rem;
+        font-style: italic;
+        color: #777;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .calificacion {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f4f6f8;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #333;
+
+    strong {
+      color: #444;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      input[type="range"] {
+        width: 100%;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 8px;
+        background: #ddd;
+        border-radius: 5px;
+        outline: none;
+        margin-top: 10px;
+        transition: background 0.3s;
+
+        &::-webkit-slider-thumb {
+          width: 18px;
+          height: 18px;
+          background: #0077cc;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 0 4px rgba(0, 119, 204, 0.3);
+        }
+
+        &::-moz-range-thumb {
+          width: 18px;
+          height: 18px;
+          background: #0077cc;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+      }
+
+      .range-value {
+        margin-top: 0.5rem;
+        font-weight: 600;
+        color: #0077cc;
+      }
+    }
+
+    .comentario {
+      margin-top: 1rem;
+      font-style: italic;
+      color: #555;
+      white-space: pre-line;
+    }
+  }
+
+  p {
+    text-align: center;
+    color: #888;
+    margin-top: 2rem;
+    font-style: italic;
+  }
+}
