@@ -15,6 +15,7 @@ import { MisTurnosEspecialistaComponent } from './turnos/mis-turnos-especialista
 import { MisTurnosPacienteComponent } from './turnos/mis-turnos-paciente/mis-turnos-paciente.component';
 import { TurnosAdminComponent } from './turnos/turnos-admin/turnos-admin.component';
 import { SolicitarTurnoComponent } from './turnos/solicitar-turnos/solicitar-turnos.component';
+import { CargarHistoriaClinicaComponent } from './turnos/cargar-historia-clinica/cargar-historia-clinica.component';
 
 export const routes: Routes = [
   {
@@ -65,6 +66,12 @@ export const routes: Routes = [
     component: SolicitarTurnoComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
     data: { roles: ['admin','paciente'] }
+  },
+  {
+    path: 'cargar-historia/:turnoId/:pacienteId',
+    component: CargarHistoriaClinicaComponent,
+    canActivate: [authGuard, VerificadoGuard, RoleGuard],
+    data: { roles: ['especialista'] }
   },
   {
     path: 'turnos-admin',

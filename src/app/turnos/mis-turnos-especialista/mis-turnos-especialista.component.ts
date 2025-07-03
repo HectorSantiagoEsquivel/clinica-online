@@ -8,6 +8,7 @@ import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router'; // 👈 Importante
 
 @Component({
   selector: 'app-mis-turnos-especialista',
@@ -26,7 +27,8 @@ export class MisTurnosEspecialistaComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private turnosService: TurnosService
+    private turnosService: TurnosService,
+    private router: Router // 👈 Inyectamos Router
   ) {}
 
   ngOnInit(): void {
@@ -36,7 +38,6 @@ export class MisTurnosEspecialistaComponent implements OnInit, OnDestroy {
       this.sub = this.turnosService
         .obtenerTurnos(usuario.id, 'especialista')
         .subscribe((turnos) => {
-          console.log(usuario.id);
           this.turnos = turnos.sort((a, b) =>
             new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
           );
@@ -102,34 +103,43 @@ export class MisTurnosEspecialistaComponent implements OnInit, OnDestroy {
     }
   }
 
-async finalizarTurno(turnoId: string) {
-  const { value: resena } = await Swal.fire({
-    title: 'Finalizar Turno',
-    input: 'textarea',
-    inputLabel: 'Reseña / Diagnóstico',
-    inputPlaceholder: 'Escribí un resumen de la consulta...',
-    showCancelButton: true,
-  });
+  // 🚀 Nuevo método: navegar a carga de historia clínica
+  cargarHistoria(turno: Turno) {
+    if (!turno.id || !turno.pacienteId) {
+      Swal.fire('Error', 'Turno inválido', 'error');
+      return;
+    }
 
-  if (!resena) return;
-
-  try {
-    await this.turnosService.finalizarTurno(turnoId, resena);
-    Swal.fire({
-      icon: 'success',
-      title: 'Turno finalizado',
-      text: 'El turno fue marcado como realizado.',
-    });
-    this.actualizarListado();
-  } catch (error: any) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: error.message || 'No se pudo finalizar el turno.',
-    });
+    this.router.navigate(['/cargar-historia', turno.id, turno.pacienteId]);
   }
-}
 
+  async finalizarTurno(turnoId: string) {
+    const { value: resena } = await Swal.fire({
+      title: 'Finalizar Turno',
+      input: 'textarea',
+      inputLabel: 'Reseña / Diagnóstico',
+      inputPlaceholder: 'Escribí un resumen de la consulta...',
+      showCancelButton: true,
+    });
+
+    if (!resena) return;
+
+    try {
+      await this.turnosService.finalizarTurno(turnoId, resena);
+      Swal.fire({
+        icon: 'success',
+        title: 'Turno finalizado',
+        text: 'El turno fue marcado como realizado.',
+      });
+      this.actualizarListado();
+    } catch (error: any) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo finalizar el turno.',
+      });
+    }
+  }
 
   actualizarListado() {
     this.cargando = true;
@@ -145,13 +155,12 @@ async finalizarTurno(turnoId: string) {
   }
 
   verResena(resena: string) {
-  Swal.fire({
-    title: 'Reseña del Turno',
-    text: resena,
-    icon: 'info',
+    Swal.fire({
+      title: 'Reseña del Turno',
+      text: resena,
+      icon: 'info',
     });
   }
-
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
