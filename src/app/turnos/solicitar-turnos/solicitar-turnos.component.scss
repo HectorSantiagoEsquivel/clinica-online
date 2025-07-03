@@ -1,0 +1,78 @@
+
+$primary-color: #2c3e50;
+$secondary-color: #009688;
+$background-color: #f8f9fa;
+$card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+$border-radius: 10px;
+$transition: all 0.3s ease;
+
+
+.solicitar-turno-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 800px;
+  margin: auto;
+
+  h2 {
+    text-align: center;
+    color: $primary-color; // Añadido para consistencia
+  }
+
+  .botonera {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: $primary-color;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+      background: lighten($primary-color, 10%);
+    }
+
+    &.activo {
+      background: $secondary-color;
+      color: white;
+      font-weight: bold;
+    }
+  }
+
+  select {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: $primary-color;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+
+    option {
+      background: $primary-color;
+      color: white;
+    }
+  }
+
+  .reservar-turno {
+    text-align: center;
+    margin-top: 1rem;
+
+    button {
+      background: $secondary-color;
+      color: white;
+      padding: 0.7rem 2rem;
+      font-size: 1.2rem;
+
+      &:hover {
+        background: darken($secondary-color, 10%);
+      }
+    }
+  }
+}

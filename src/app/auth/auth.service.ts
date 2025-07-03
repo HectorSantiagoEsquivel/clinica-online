@@ -149,6 +149,46 @@ export class AuthService {
     return this.cargarImagenesPerfil(data);
   }
 
+  async traerUsuariosPorPerfil(rol: 'paciente' | 'especialista' | 'admin'): Promise<Usuario[]> {
+  const { data, error } = await this.supabase.client
+    .from('usuarios')
+    .select('*')
+    .eq('rol', rol);
+
+  if (error) throw error;
+
+
+  const usuariosConImagenes = await Promise.all(
+    data.map(usuario => this.cargarImagenesPerfil(usuario))
+  );
+
+  return usuariosConImagenes;
+}
+
+  async traerEspecialistasPorEspecialidad(especialidadId: string): Promise<Usuario[]> {
+    const { data, error } = await this.supabase.client
+      .from('especialista_especialidades')
+      .select('especialista:especialista_id (*)')
+      .eq('especialidad_id', especialidadId);
+
+    if (error) throw error;
+
+    // Ajuste porque viene como array
+    const filas = data as { especialista: Usuario[] }[];
+
+    const especialistas = filas.map(f => f.especialista[0]);
+
+    // Cargar imágenes
+    const especialistasConImagenes = await Promise.all(
+      especialistas.map(esp => this.cargarImagenesPerfil(esp))
+    );
+
+    return especialistasConImagenes;
+  }
+
+
+
+
 
   async getSesion()
   {

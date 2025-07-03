@@ -1,0 +1,79 @@
+<div class="solicitar-turno-container">
+
+  <h2>Solicitar turno</h2>
+
+  <!-- ESPECIALIDADES -->
+  <label>Especialidad:</label>
+  <div class="botonera">
+    <button
+      *ngFor="let esp of especialidades"
+      (click)="
+        especialidadSeleccionadaNombre = esp.nombre;
+        especialidadSeleccionadaId = esp.id;
+        onEspecialidadChange()
+      "
+      [class.activo]="especialidadSeleccionadaNombre === esp.nombre"
+    >
+      {{ esp.nombre }}
+    </button>
+  </div>
+
+  <!-- ESPECIALISTAS -->
+  <div *ngIf="especialistas.length > 0">
+    <label>Especialista:</label>
+    <div class="botonera">
+      <button
+        *ngFor="let esp of especialistas"
+        (click)="especialistaSeleccionado = esp; onEspecialistaChange()"
+        [class.activo]="especialistaSeleccionado?.id === esp.id"
+      >
+        {{ esp.nombre }} {{ esp.apellido }}
+      </button>
+    </div>
+  </div>
+
+  <!-- PACIENTES (solo para admin) -->
+  <div *ngIf="esAdmin && especialistas.length > 0" class="input-container">
+    <label>Paciente:</label>
+    <select [(ngModel)]="pacienteSeleccionado">
+      <option [ngValue]="undefined" disabled selected>Seleccione un paciente</option>
+      <option *ngFor="let p of pacientes" [ngValue]="p">
+        {{ p.nombre }} {{ p.apellido }}
+      </option>
+    </select>
+  </div>
+
+  <!-- DIAS -->
+  <div *ngIf="especialistaSeleccionado && diasProximos.length > 0">
+    <label>Día:</label>
+    <div class="botonera">
+      <button
+        *ngFor="let dia of diasProximos"
+        (click)="onDiaSeleccionado(dia)"
+        [class.activo]="diaSeleccionado === dia"
+      >
+        {{ obtenerNombreDia(dia) }} - {{ dia }}
+      </button>
+    </div>
+  </div>
+
+  <!-- HORARIOS -->
+  <div *ngIf="diaSeleccionado && horariosDisponibles.length > 0">
+    <label>Horario disponible:</label>
+    <div class="botonera">
+      <button
+        *ngFor="let hora of horariosDisponibles"
+        (click)="horaSeleccionada = hora"
+        [class.activo]="horaSeleccionada === hora"
+      >
+        {{ hora }}
+      </button>
+    </div>
+  </div>
+
+  <!-- RESERVAR -->
+  <div class="reservar-turno" *ngIf="horaSeleccionada">
+    <button (click)="reservarTurno()">Reservar turno</button>
+  </div>
+
+</div>

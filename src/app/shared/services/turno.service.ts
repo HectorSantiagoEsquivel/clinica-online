@@ -47,10 +47,17 @@ export class TurnosService {
     return from(promesa);
   }
 
+  async crearTurno(turno: Partial<Turno>): Promise<void> {
+    const { error } = await this.supabase.client
+      .from(this.tabla)
+      .insert([turno]);
+
+    if (error) throw error;
+  }
 
   async calificarAtencion(turnoId: string, puntaje: number, comentario: string): Promise<void> {
     const { error } = await this.supabase.client
-      .from('turnos')
+      .from(this.tabla)
       .update({
         calificaAtencion: puntaje,
         comentarioCalificacion: comentario
@@ -59,8 +66,6 @@ export class TurnosService {
 
     if (error) throw error;
   }
-
-
 
   obtenerTurnosPorUsuario(
     usuarioId: string,
@@ -84,6 +89,30 @@ export class TurnosService {
     return from(promesa);
   }
 
+  async obtenerTurnosFiltrados(filtros: any): Promise<Turno[]> 
+  {
+    let query = this.supabase.client
+      .from(this.tabla)
+      .select('*');
+
+    if (filtros.especialistaId) query = query.eq('especialistaId', filtros.especialistaId);
+    
+    if (filtros.fecha) {
+      // Convertir a fecha local en el cliente
+      const fechaInicio = new Date(`${filtros.fecha}T00:00:00`);
+      const fechaFin = new Date(`${filtros.fecha}T23:59:59`);
+      
+      query = query.gte('fecha', fechaInicio.toISOString())
+                  .lt('fecha', fechaFin.toISOString());
+    }
+
+    if (filtros.estados) query = query.in('estado', filtros.estados);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  }
+
 
   async actualizarEstadoConComentario(
     turnoId: string,
@@ -101,8 +130,7 @@ export class TurnosService {
     if (error) throw error;
   }
 
-  async aceptarTurno(turnoId: string): Promise<void> 
-  {
+  async aceptarTurno(turnoId: string): Promise<void> {
     const { error } = await this.supabase.client
       .from(this.tabla)
       .update({ estado: 'aceptado' })
@@ -111,8 +139,7 @@ export class TurnosService {
     if (error) throw error;
   }
 
-  async finalizarTurno(turnoId: string, resena: string): Promise<void> 
-  {
+  async finalizarTurno(turnoId: string, resena: string): Promise<void> {
     const { error } = await this.supabase.client
       .from(this.tabla)
       .update({
@@ -123,8 +150,4 @@ export class TurnosService {
 
     if (error) throw error;
   }
-
-
-
-
 }

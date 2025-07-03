@@ -3,11 +3,12 @@ import { Usuario } from '../../shared/models/usuario.model';
 import { AuthService } from '../../auth/auth.service';
 import { EspecialidadService } from '../../shared/services/especialidad.service'; // Servicio para traer especialidades
 import { CommonModule } from '@angular/common';
+import { MisHorariosEspecialistaComponent } from '../../turnos/mis-horarios-especialista/mis-horarios-especialista.component';
 
 @Component({
   selector: 'app-mi-perfil',
   templateUrl: './mi-perfil.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule, MisHorariosEspecialistaComponent],
   styleUrls: ['./mi-perfil.component.scss'],
 })
 export class MiPerfilComponent implements OnInit {

@@ -1,0 +1,196 @@
+$primary-color: #2c3e50;
+$secondary-color: #009688;
+$background-color: #f8f9fa;
+$card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+$border-radius: 10px;
+$transition: all 0.3s ease;
+
+.listado {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+
+  /* Título principal */
+  h2 {
+    color: $primary-color;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 0.5rem;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: $secondary-color;
+    }
+  }
+
+  /* Tabs arriba */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+
+  button {
+    background: #f0f0f0;
+    border: 2px solid transparent;
+    padding: 0.6rem 1.5rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: $transition, transform 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+
+    &.active {
+      background: $secondary-color;
+      color: white;
+      border-color: $secondary-color;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    &:hover {
+      transform: scale(1.05);
+      background: lighten($secondary-color, 20%);
+      color: white;
+    }
+  }
+}
+
+
+  /* Formulario para agregar horario */
+  .filtro {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    label {
+      flex-basis: 100%;
+      font-weight: 600;
+      color: $primary-color;
+      font-size: 1rem;
+    }
+
+    input, select {
+      padding: 0.75rem;
+      border: 1px solid #e0e0e0;
+      border-radius: $border-radius;
+      font-size: 1rem;
+      transition: $transition;
+      width: 100%;
+      max-width: 220px;
+
+      &:focus {
+        outline: none;
+        border-color: $secondary-color;
+        box-shadow: 0 0 0 2px rgba($secondary-color, 0.2);
+      }
+
+      &::placeholder {
+        color: #aaa;
+      }
+    }
+
+    button {
+      align-self: flex-end;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: $secondary-color;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: $transition;
+
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+  }
+
+  /* Grilla vertical clásica (por si la usas en otro lado) */
+  .turnos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Lista horizontal para tabs 'mis horarios' */
+  .turnos-horizontal {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 1rem;
+
+    .card {
+      min-width: 220px;
+      flex-shrink: 0;
+    }
+  }
+
+  /* Tarjetas */
+  .card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: $border-radius;
+    box-shadow: $card-shadow;
+    transition: $transition;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: $primary-color;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+
+    .card-body {
+      flex-grow: 1;
+
+      p {
+        margin: 0.5rem 0;
+        line-height: 1.5;
+        color: #666;
+
+        strong {
+          color: $primary-color;
+          font-weight: 600;
+        }
+      }
+
+      button {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        background-color: #e74c3c;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        transition: $transition;
+
+        &:hover {
+          background-color: darken(#e74c3c, 10%);
+        }
+      }
+    }
+  }
+}

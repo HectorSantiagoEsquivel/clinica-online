@@ -14,6 +14,7 @@ import { MiPerfilComponent } from './shared/components/mi-perfil.component';
 import { MisTurnosEspecialistaComponent } from './turnos/mis-turnos-especialista/mis-turnos-especialista.component';
 import { MisTurnosPacienteComponent } from './turnos/mis-turnos-paciente/mis-turnos-paciente.component';
 import { TurnosAdminComponent } from './turnos/turnos-admin/turnos-admin.component';
+import { SolicitarTurnoComponent } from './turnos/solicitar-turnos/solicitar-turnos.component';
 
 export const routes: Routes = [
   {
@@ -58,6 +59,12 @@ export const routes: Routes = [
     component: MisTurnosPacienteComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
     data: { roles: ['paciente'] }
+  },
+  {
+    path: 'solicitar-turnos',
+    component: SolicitarTurnoComponent,
+    canActivate: [authGuard, VerificadoGuard, RoleGuard],
+    data: { roles: ['admin','paciente'] }
   },
   {
     path: 'turnos-admin',
