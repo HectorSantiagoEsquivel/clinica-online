@@ -41,14 +41,7 @@ Este proyecto es una app web hecha en Angular y Supabase que simula una clínica
   - Habilitar especialistas.
   - Ver estadísticas con gráficos descargables.
 
-## 📦 Cómo correr el proyecto
+## URL:
+  ### https://clinica-online-27d07.web.app
 
-1. Cloná el repositorio.
-2. Instalá dependencias: `npm install`
-3. Configurá `environment.ts` con tu URL y API KEY de Supabase.
-4. Ejecutá: `ng serve`
-5. Abrí `http://localhost:4200` en el navegador
-
----
-
-> Proyecto realizado como entrega final para la materia *[Nombre de la materia]* en *[Nombre de la institución]*.
+> Proyecto realizado como entrega final para la materia *Labo IV*
