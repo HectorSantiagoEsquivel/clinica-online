@@ -7,11 +7,21 @@ import { AuthService } from '../../auth/auth.service';
 import { Usuario } from '../../shared/models/usuario.model';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { SpinnerDirective } from '../../shared/directives/spinner.directive';
+import { CapitalizarPrimeraLetraPipe } from '../../shared/pipes/capitalizarPrimeraLetra';
+import { CapitalizarInputDirective } from '../../shared/directives/capitalizar-input.directive';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule,RecaptchaModule,SpinnerDirective],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    CapitalizarPrimeraLetraPipe,
+    CommonModule,
+    RecaptchaModule,
+    SpinnerDirective,
+    CapitalizarInputDirective // ✅ Acá estaba faltando
+  ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
@@ -48,7 +58,6 @@ export class RegisterComponent implements OnInit {
       validators: this.passwordsIguales
     });
 
-    // Escuchar cambios de rol
     this.form.get('rol')?.valueChanges.subscribe(rol => {
       if (rol === 'paciente') {
         this.form.get('obra_social')?.enable();
@@ -58,16 +67,13 @@ export class RegisterComponent implements OnInit {
         if (!this.form.get('especialidades')) {
           this.form.setControl('especialidades', this.fb.array([]));
         }
-        this.agregarEspecialidad(); // agrega al menos una especialidad
+        this.agregarEspecialidad();
       }
     });
 
-    // Inicializar según el valor inicial de rol
     this.form.get('rol')?.updateValueAndValidity();
   }
 
-
-  // Validador custom
   passwordsIguales(formGroup: FormGroup) {
     const pass = formGroup.get('password')?.value;
     const confirm = formGroup.get('confirmarPassword')?.value;
@@ -92,16 +98,16 @@ export class RegisterComponent implements OnInit {
   }
 
   async registrar() {
-    this.cargando=true;
+    this.cargando = true;
     this.submitted = true;
     this.errorMsg = '';
 
     const rol = this.form.value.rol;
     const esPaciente = rol === 'paciente';
 
-    // Validación extra
     if (this.form.invalid || !this.imagenPerfilFile || (esPaciente && !this.imagenSecundariaFile) || !this.captchaResuelto) {
       this.errorMsg = 'Completa todos los campos requeridos y resuelve el captcha.';
+      this.cargando = false;
       return;
     }
 

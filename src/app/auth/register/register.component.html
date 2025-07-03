@@ -1,9 +1,12 @@
-<div class="login-container"[appSpinner]="cargando">
+<div class="login-container" [appSpinner]="cargando">
   <h2>Registro</h2>
   <form [formGroup]="form" (ngSubmit)="registrar()">
 
     <!-- Nombre -->
     <input type="text" placeholder="Nombre" formControlName="nombre" />
+    <div *ngIf="f['nombre'].value">
+      Vista previa: {{ f['nombre'].value | capitalizarPrimeraLetra }}
+    </div>
     <div *ngIf="f['nombre'].touched && f['nombre'].invalid" class="field-error">
       <small *ngIf="f['nombre'].errors?.['required']">El nombre es obligatorio.</small>
       <small *ngIf="f['nombre'].errors?.['pattern']">El nombre solo debe contener letras.</small>
@@ -11,6 +14,9 @@
 
     <!-- Apellido -->
     <input type="text" placeholder="Apellido" formControlName="apellido" />
+    <div *ngIf="f['apellido'].value">
+      Vista previa: {{ f['apellido'].value | capitalizarPrimeraLetra }}
+    </div>
     <div *ngIf="f['apellido'].touched && f['apellido'].invalid" class="field-error">
       <small *ngIf="f['apellido'].errors?.['required']">El apellido es obligatorio.</small>
       <small *ngIf="f['apellido'].errors?.['pattern']">El apellido solo debe contener letras.</small>
@@ -65,6 +71,16 @@
         <input [formControlName]="i" placeholder="Especialidad {{ i + 1 }}" />
       </div>
       <button type="button" (click)="agregarEspecialidad()">+ Añadir especialidad</button>
+
+      <!-- Vista previa de especialidades con pipe -->
+      <div *ngIf="especialidades.length > 0">
+        <h4>Especialidades seleccionadas:</h4>
+        <ul>
+          <li *ngFor="let esp of especialidades.controls">
+            {{ esp.value | capitalizarPrimeraLetra }}
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Subida de imágenes -->
