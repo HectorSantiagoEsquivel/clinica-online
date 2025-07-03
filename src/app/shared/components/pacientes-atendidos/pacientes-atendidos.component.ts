@@ -4,12 +4,13 @@ import { TurnosService } from '../../services/turno.service';
 import { Usuario } from '../../models/usuario.model';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { SpinnerDirective } from '../../directives/spinner.directive';
 
 @Component({
   selector: 'app-pacientes-atendidos',
   templateUrl: './pacientes-atendidos.component.html',
   styleUrls: ['./pacientes-atendidos.component.scss'],
-  imports:[CommonModule]
+  imports:[CommonModule,SpinnerDirective]
 })
 export class PacientesAtendidosComponent implements OnInit {
   pacientes: Usuario[] = [];

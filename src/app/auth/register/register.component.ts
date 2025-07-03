@@ -6,11 +6,12 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth/auth.service';
 import { Usuario } from '../../shared/models/usuario.model';
 import { RecaptchaModule } from 'ng-recaptcha';
+import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule,RecaptchaModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule,RecaptchaModule,SpinnerDirective],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
@@ -91,6 +92,7 @@ export class RegisterComponent implements OnInit {
   }
 
   async registrar() {
+    this.cargando=true;
     this.submitted = true;
     this.errorMsg = '';
 
@@ -118,8 +120,6 @@ export class RegisterComponent implements OnInit {
       fecha_nacimiento: this.form.value.fecha_nacimiento,
       obra_social: esPaciente ? this.form.value.obra_social || null : null
     };
-
-    this.cargando = true;
 
     try {
       await this.authService.registrarse(

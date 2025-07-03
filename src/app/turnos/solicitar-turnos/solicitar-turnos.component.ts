@@ -11,11 +11,12 @@ import { TurnosService } from '../../shared/services/turno.service';
 import { Usuario } from '../../shared/models/usuario.model';
 import { Horario } from '../../shared/models/horario.model';
 import { Turno } from '../../shared/models/turno';
+import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 
 @Component({
   selector: 'app-solicitar-turnos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule,SpinnerDirective],
   templateUrl: './solicitar-turnos.component.html',
   styleUrls: ['./solicitar-turnos.component.scss'],
 })
@@ -23,6 +24,7 @@ export class SolicitarTurnoComponent implements OnInit {
   pacientes: Usuario[] = [];
   pacienteSeleccionado?: Usuario;
   esAdmin = false;
+  cargando=true;
 
   especialidades: any[] = [];
   especialistas: Usuario[] = [];
@@ -43,6 +45,7 @@ export class SolicitarTurnoComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.cargando=true;
     // 1) traigo especialidades
     this.especialidades = await this.especialidadService.getEspecialidades();
 
@@ -55,6 +58,7 @@ export class SolicitarTurnoComponent implements OnInit {
     if (this.esAdmin) {
       this.pacientes = await this.authService.traerUsuariosPorPerfil('paciente');
     }
+    this.cargando=false;
   }
 
   /** Genera 15 fechas YYYY-MM-DD en hora local */
@@ -232,6 +236,7 @@ export class SolicitarTurnoComponent implements OnInit {
   }
 
   async reservarTurno() {
+    this.cargando=true;
     if (!this.diaSeleccionado || !this.horaSeleccionada) {
       Swal.fire('Faltan datos', 'Por favor seleccioná día y horario.', 'error');
       return;
@@ -253,6 +258,8 @@ export class SolicitarTurnoComponent implements OnInit {
     const [hh, mm] = this.horaSeleccionada.split(':').map(Number);
     const fechaLocal = new Date(año, mes - 1, dia, hh, mm);
     const iso = fechaLocal.toISOString();
+
+    this.cargando=false;
 
     try {
       await this.turnosService.crearTurno({

@@ -1,5 +1,5 @@
 <!-- Botón de exportar PDF -->
-<div class="flex justify-end mb-4">
+<div class="flex justify-end mb-4"[appSpinner]="cargando">
   <button 
     (click)="generarPdfDesdeTurnos()" 
     class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"

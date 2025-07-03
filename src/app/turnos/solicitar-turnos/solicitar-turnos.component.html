@@ -33,29 +33,29 @@
   </div>
 
   <!-- PACIENTES (solo para admin) -->
-  <div *ngIf="esAdmin && especialistas.length > 0" class="input-container">
+    <div *ngIf="esAdmin && especialistas.length > 0" class="input-container"> <!-- Cambio de clase -->
     <label>Paciente:</label>
     <select [(ngModel)]="pacienteSeleccionado">
-      <option [ngValue]="undefined" disabled selected>Seleccione un paciente</option>
-      <option *ngFor="let p of pacientes" [ngValue]="p">
+        <option [ngValue]="undefined" disabled selected>Seleccione un paciente</option>
+        <option *ngFor="let p of pacientes" [ngValue]="p">
         {{ p.nombre }} {{ p.apellido }}
-      </option>
+        </option>
     </select>
-  </div>
-
-  <!-- DIAS -->
-  <div *ngIf="especialistaSeleccionado && diasProximos.length > 0">
-    <label>Día:</label>
-    <div class="botonera">
-      <button
-        *ngFor="let dia of diasProximos"
-        (click)="onDiaSeleccionado(dia)"
-        [class.activo]="diaSeleccionado === dia"
-      >
-        {{ obtenerNombreDia(dia) }} - {{ dia }}
-      </button>
     </div>
+  <!-- DIAS -->
+
+<div *ngIf="especialistaSeleccionado && diasProximos.length > 0">
+  <label>Día:</label>
+  <div class="botonera">
+    <button
+      *ngFor="let dia of diasProximos"
+      (click)="onDiaSeleccionado(dia)"
+      [class.activo]="diaSeleccionado === dia"
+    >
+      {{ obtenerNombreDia(dia) }} — {{ dia }}
+    </button>
   </div>
+</div>
 
   <!-- HORARIOS -->
   <div *ngIf="diaSeleccionado && horariosDisponibles.length > 0">

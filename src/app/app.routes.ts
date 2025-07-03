@@ -4,8 +4,8 @@ import { VerificadoGuard } from './shared/guard/verificado.guard';
 import { RoleGuard } from './shared/guard/role.guard';
 import { noAuthGuard } from './shared/guard/noauth.guard';
 import { NoVerificadoGuard } from './shared/guard/no-verificado.guard';
-// Importaciones de componentes
 
+// Componentes
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { AdminComponent } from './admin/admin.component';
@@ -24,84 +24,90 @@ export const routes: Routes = [
   {
     path: '',
     component: LoginComponent,
-    canActivate: [noAuthGuard]
+    canActivate: [noAuthGuard],
+    data: { animation: 'login' }
   },
   {
     path: 'login',
     component: LoginComponent,
-    canActivate: [noAuthGuard]
+    canActivate: [noAuthGuard],
+    data: { animation: 'login' }
   },
   {
     path: 'registro',
     component: RegisterComponent,
-    canActivate: [noAuthGuard]
+    canActivate: [noAuthGuard],
+    data: { animation: 'registro' }
   },
   {
     path: 'esperando-verificacion',
     component: EsperandoVerificacionComponent,
     canActivate: [authGuard, NoVerificadoGuard],
+    data: { animation: 'esperando-verificacion' }
   },
   {
     path: 'home',
     component: MiPerfilComponent,
     canActivate: [authGuard, VerificadoGuard],
+    data: { animation: 'mi-perfil' }
   },
   {
     path: 'administracion',
     component: AdminComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['admin'] }
+    data: { roles: ['admin'], animation: 'administracion' }
   },
   {
     path: 'mis-turnos-especialista',
     component: MisTurnosEspecialistaComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['especialista'] }
+    data: { roles: ['especialista'], animation: 'mis-turnos-especialista' }
   },
   {
     path: 'mis-turnos-paciente',
     component: MisTurnosPacienteComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['paciente'] }
+    data: { roles: ['paciente'], animation: 'mis-turnos-paciente' }
   },
   {
     path: 'solicitar-turnos',
     component: SolicitarTurnoComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['admin','paciente'] }
+    data: { roles: ['admin', 'paciente'], animation: 'solicitar-turnos' }
   },
   {
     path: 'cargar-historia/:turnoId/:pacienteId',
     component: CargarHistoriaClinicaComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['especialista'] }
+    data: { roles: ['especialista'], animation: 'cargar-historia' }
   },
   {
     path: 'historia-clinica/:pacienteId',
     component: HistoriaClinicaPacienteComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['especialista','admin'] }
+    data: { roles: ['especialista','admin'], animation: 'historia-clinica' }
   },
   {
     path: 'turnos-admin',
     component: TurnosAdminComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['admin'] }
+    data: { roles: ['admin'], animation: 'turnos-admin' }
   },
   {
     path: 'estadisticas',
     component: AdminReportesComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['admin'] }
+    data: { roles: ['admin'], animation: 'estadisticas' }
   },
   {
     path: 'pacientes-atendidos',
     component: PacientesAtendidosComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['especialista'] }
+    data: { roles: ['especialista'], animation: 'pacientes-atendidos' }
   },
   {
     path: '**',
-    redirectTo: ''
+    redirectTo: '',
+    data: { animation: 'login' }
   }
 ];

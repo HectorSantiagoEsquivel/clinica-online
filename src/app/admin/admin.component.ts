@@ -5,11 +5,12 @@ import { Usuario } from '../shared/models/usuario.model';
 import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { SpinnerDirective } from '../shared/directives/spinner.directive';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule],
+  imports: [FormsModule, CommonModule, ReactiveFormsModule,SpinnerDirective],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
@@ -31,7 +32,8 @@ export class AdminComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void>  {
+    this.cargando=true;
     this.crearForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
@@ -67,7 +69,8 @@ export class AdminComponent implements OnInit {
     });
 
     this.crearForm.get('rol')?.updateValueAndValidity();
-    this.cargarUsuarios();
+    await this.cargarUsuarios();
+    this.cargando=false;
   }
 
   passwordsIguales(group: FormGroup) {

@@ -1,28 +1,52 @@
+// src/app/shared/components/navbar/navbar.component.ts
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../../auth/auth.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule,ActivatedRoute } from '@angular/router';
+import { RouterModule } from '@angular/router';        // <-- ¡agregado!
+import { AuthService } from '../../../auth/auth.service';
+import { Usuario } from '../../models/usuario.model';
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,                                    // <-- ¡agregado!
+  ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  isLoggedIn = false;
+  usuario?: Usuario | null;
+  cargando = true;
 
-  constructor(private authService: AuthService, private route: ActivatedRoute) {}
+  constructor(private authService: AuthService) {}
 
-  async ngOnInit() 
-  {
-    const data = await this.authService.getSesion();
-    this.isLoggedIn = !!data;
+  ngOnInit(): void {
+    this.authService.session$.subscribe(async session => {
+      if (session?.user) {
+        try {
+          this.usuario = await this.authService.getUserProfile();
+        } catch {
+          this.usuario = null;
+        }
+      } else {
+        this.usuario = null;
+      }
+      this.cargando = false;
+    });
   }
 
-  async cerrarSesion() {
+  logout(): void {
     this.authService.logout();
-    window.location.href = '/login';
+  }
+
+  get isAdmin(): boolean {
+    return this.usuario?.rol === 'admin';
+  }
+  get isEspecialista(): boolean {
+    return this.usuario?.rol === 'especialista';
+  }
+  get isPaciente(): boolean {
+    return this.usuario?.rol === 'paciente';
   }
 }
-

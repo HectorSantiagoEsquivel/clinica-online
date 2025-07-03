@@ -11,13 +11,14 @@ import { ActivatedRoute } from '@angular/router';
 import { Turno } from '../../models/turno';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { SpinnerDirective } from '../../directives/spinner.directive';
 
 @Component({
   selector: 'app-historia-clinica-paciente',
   templateUrl: './historia-clinica-paciente.component.html',
   styleUrls: ['./historia-clinica-paciente.component.scss'],
   standalone: true,
-  imports: [FormsModule, CommonModule]
+  imports: [FormsModule, CommonModule,SpinnerDirective]
 })
 export class HistoriaClinicaPacienteComponent implements OnInit {
   historias: {

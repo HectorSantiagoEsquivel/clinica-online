@@ -1,9 +1,9 @@
-<div class="admin-container p-4 max-w-4xl mx-auto">
+<div class="admin-container p-4 max-w-4xl mx-auto" [appSpinner]="cargando">
 
   <!-- Tabs -->
   <div class="flex gap-4 mb-6">
-<button class="btn" [class.active]="tabActiva === 'lista'" (click)="tabActiva = 'lista'">Lista de usuarios</button>
-<button class="btn" [class.active]="tabActiva === 'crear'" (click)="tabActiva = 'crear'">Crear usuario</button>
+    <button class="btn" [class.active]="tabActiva === 'lista'" (click)="tabActiva = 'lista'">Lista de usuarios</button>
+    <button class="btn" [class.active]="tabActiva === 'crear'" (click)="tabActiva = 'crear'">Crear usuario</button>
   </div>
 
   <!-- Lista de usuarios -->
@@ -109,7 +109,6 @@
           <label>Confirmar Contraseña</label>
           <input type="password" formControlName="confirmarPassword" class="input" />
           <div *ngIf="submitted && crearForm.errors?.['passwordsNoCoinciden']" class="text-red-500 text-sm">
-
             Las contraseñas no coinciden
           </div>
         </div>

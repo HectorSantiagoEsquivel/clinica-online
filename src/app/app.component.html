@@ -1,6 +1,6 @@
-<div class="app-wrapper">
+<div class="app-layout">
   <app-navbar></app-navbar>
-  <div class="main-content">
-    <router-outlet></router-outlet>
-  </div>
+  <main [@routeAnimations]="prepareRoute(outlet)" class="view-container">
+    <router-outlet #outlet="outlet"></router-outlet>
+  </main>
 </div>

@@ -8,19 +8,21 @@ import { AuthService } from '../../auth/auth.service';
 import { Usuario } from '../../shared/models/usuario.model';
 import { CommonModule } from '@angular/common';
 import { TurnosService } from '../../shared/services/turno.service';
+import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 
 @Component({
   selector: 'app-cargar-historia-clinica',
   templateUrl: './cargar-historia-clinica.component.html',
   styleUrls: ['./cargar-historia-clinica.component.scss'],
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule]
+  imports: [FormsModule, CommonModule, ReactiveFormsModule,SpinnerDirective]
 })
 export class CargarHistoriaClinicaComponent implements OnInit {
   historiaClinicaForm: FormGroup;
   turnoId?: string;
   pacienteId?: string;
   usuarioActual?: Usuario;
+  cargando=true;
 
   constructor(
     private historiaService: HistoriaClinicaService,
@@ -45,14 +47,17 @@ export class CargarHistoriaClinicaComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.cargando=true;
     this.turnoId = this.route.snapshot.paramMap.get('turnoId') || '';
     this.pacienteId = this.route.snapshot.paramMap.get('pacienteId') || '';
     this.authService.getUserProfile()
       .then(usuario => this.usuarioActual = usuario)
       .catch(error => console.error('Error al cargar usuario:', error));
+    this.cargando=false;
   }
 
   async finalizarTurno() {
+    this.cargando=true;
     if (!this.pacienteId || !this.usuarioActual?.id || !this.turnoId) {
       Swal.fire({
         icon: 'error',
@@ -84,7 +89,7 @@ export class CargarHistoriaClinicaComponent implements OnInit {
       presion: form.presion,
       datos_adicionales: datosAdicionales
     };
-
+    this.cargando=false;
     try {
       // 1. Guardar historia clínica
       await this.historiaService.crearHistoriaClinica(historia);
@@ -107,5 +112,6 @@ export class CargarHistoriaClinicaComponent implements OnInit {
         text: error.message || 'No se pudo guardar la historia clínica ni finalizar el turno.'
       });
     }
+
   }
 }

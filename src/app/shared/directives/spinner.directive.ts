@@ -24,7 +24,7 @@ export class SpinnerDirective implements OnInit, OnChanges {
 
 private createSpinner() {
   this.spinnerElement = this.renderer.createElement('div');
-  this.renderer.setStyle(this.spinnerElement, 'position', 'fixed'); // Cambiado a fixed
+  this.renderer.setStyle(this.spinnerElement, 'position', 'absolute'); // Cambiado a fixed
   this.renderer.setStyle(this.spinnerElement, 'top', '0');
   this.renderer.setStyle(this.spinnerElement, 'left', '0');
   this.renderer.setStyle(this.spinnerElement, 'width', '100%');

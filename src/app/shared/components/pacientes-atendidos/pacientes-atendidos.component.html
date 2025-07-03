@@ -1,4 +1,4 @@
-<div *ngIf="cargando" class="cargando">Cargando pacientes atendidos...</div>
+<div *ngIf="cargando" class="cargando"[appSpinner]="cargando">Cargando pacientes atendidos...</div>
 
 <div *ngIf="!cargando && pacientes.length === 0" class="vacio">
   No has atendido a ningún paciente aún.

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,SpinnerDirective],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -20,6 +21,7 @@ export class LoginComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
   async login() {
+    this.cargando=true;
     this.error = null;
     try {
       await this.auth.login(this.email, this.password);
@@ -27,6 +29,7 @@ export class LoginComponent {
     } catch (err: any) {
       this.error = this.traducirError(err.message);
     }
+    this.cargando=false;
   }
 
   private traducirError(mensaje: string): string {

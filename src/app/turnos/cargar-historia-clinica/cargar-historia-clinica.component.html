@@ -1,4 +1,4 @@
-<div class="contenedor">
+<div class="contenedor"[appSpinner]="cargando">
   <h2 class="titulo">Cargar Historia Clínica</h2>
 
   <form [formGroup]="historiaClinicaForm" (ngSubmit)="finalizarTurno()" class="formulario">

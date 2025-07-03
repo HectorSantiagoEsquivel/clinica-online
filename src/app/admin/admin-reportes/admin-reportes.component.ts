@@ -5,20 +5,24 @@ import { AuthService } from '../../auth/auth.service';
 import { BaseChartDirective } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 
 @Component({
   selector: 'app-admin-reportes',
   templateUrl: './admin-reportes.component.html',
   styleUrls: ['./admin-reportes.component.scss'],
-  imports:[BaseChartDirective,CommonModule,FormsModule]
+  imports:[BaseChartDirective,CommonModule,FormsModule, SpinnerDirective]
 })
 export class AdminReportesComponent implements OnInit {
+  cargando = false;
   // 1) Ingresos por día (line chart)
   public ingresosData!: ChartData<'line'>;
   public ingresosOptions: ChartOptions<'line'> = {
     responsive: true,
     plugins: { legend: { display: false } }
   };
+
+
 
   // 2) Turnos por especialidad (horizontal bar)
   public porEspecialidadData!: ChartData<'bar'>;
@@ -51,9 +55,11 @@ export class AdminReportesComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.cargando=true;
     await this.cargarIngresosPorDia();
     await this.cargarTurnosPorEspecialidad();
     await this.cargarTurnosPorDia();
+    this.cargando=false;
   }
 
   private async cargarIngresosPorDia() {

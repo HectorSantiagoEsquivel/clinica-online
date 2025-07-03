@@ -1,11 +1,12 @@
-.app-wrapper {
+.app-layout {
   display: flex;
+  height: 100vh;        // ocupa toda la altura de la ventana
+  width: 100vw;         // opcional, para evitar scroll horizontales
 }
 
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  height: 100vh;
-  overflow-y: auto;
+.view-container {
+  flex: 1;              // ocupa todo el ancho restante
+  position: relative;   // para que tus animaciones absolutas funcionen
+  overflow: auto;       // scroll interno si el contenido es alto
+  padding: 1rem;        // opcional, espacio interior
 }

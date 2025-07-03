@@ -1,21 +1,97 @@
+<!-- navbar.component.html -->
 <div class="navbar-container">
-  <nav class="sidebar">
-    <ng-container *ngIf="!isLoggedIn">
-      <button class="nav-button" routerLink="/login">
-        <i class="fas fa-login"></i> Login
-      </button>
-      <button class="nav-button" routerLink="/registro">
-        <i class="fas fa-registro"></i> Registro
+  <div class="sidebar">
+
+    <!-- Logo de la clínica -->
+    <div class="sidebar-logo">
+      <img src="assets/logoClinica.png" alt="Logo Clínica" />
+    </div>
+
+    <!-- Indicador de carga -->
+    <ng-container *ngIf="cargando">
+      <button class="nav-button" disabled>
+        <i class="icon-spinner"></i>
+        Cargando…
       </button>
     </ng-container>
 
-    <ng-container *ngIf="isLoggedIn">
-      <button class="nav-button" routerLink="/home">
-        <i class="fas fa-home"></i> Inicio
+    <!-- Si no está logueado -->
+    <ng-container *ngIf="!cargando && !usuario">
+      <button class="nav-button" routerLink="/login">
+        <i class="icon-log-in"></i>
+        Login
       </button>
-      <button class="nav-button" (click)="cerrarSesion()">
-        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+      <button class="nav-button" routerLink="/registro">
+        <i class="icon-user-plus"></i>
+        Registro
       </button>
     </ng-container>
-  </nav>
+
+    <!-- Si está logueado -->
+
+    <ng-container *ngIf="!cargando && usuario">
+      <button class="nav-button" routerLink="/home">
+        <i class="icon-user"></i>
+        Mi Perfil
+      </button>
+
+      <!-- ADMIN -->
+      <ng-container *ngIf="isAdmin">
+        <button class="nav-button" routerLink="/administracion">
+          <i class="icon-shield"></i>
+          Administración
+        </button>
+        <button class="nav-button" routerLink="/turnos-admin">
+          <i class="icon-calendar-alt"></i>
+          Turnos Admin
+        </button>
+        <button class="nav-button" routerLink="/estadisticas">
+          <i class="icon-bar-chart"></i>
+          Estadísticas
+        </button>
+        <button class="nav-button" routerLink="/solicitar-turnos">
+          <i class="icon-plus-circle"></i>
+          Solicitar Turnos
+        </button>
+      </ng-container>
+
+      <!-- ESPECIALISTA -->
+      <ng-container *ngIf="isEspecialista">
+        <button class="nav-button" routerLink="/mis-turnos-especialista">
+          <i class="icon-clipboard"></i>
+          Mis Turnos
+        </button>
+        <button class="nav-button" routerLink="/pacientes-atendidos">
+          <i class="icon-heart"></i>
+          Pacientes Atendidos
+        </button>
+        <button class="nav-button" routerLink="/solicitar-turnos">
+          <i class="icon-plus-circle"></i>
+          Solicitar Turnos
+        </button>
+      </ng-container>
+
+      <!-- PACIENTE -->
+      <ng-container *ngIf="isPaciente">
+        <button class="nav-button" routerLink="/mis-turnos-paciente">
+          <i class="icon-clipboard"></i>
+          Mis Turnos
+        </button>
+        <button class="nav-button" routerLink="/solicitar-turnos">
+          <i class="icon-plus-circle"></i>
+          Solicitar Turnos
+        </button>
+      </ng-container>
+
+      <!-- Logout -->
+      <button
+        class="nav-button"
+        (click)="logout()"
+        routerLink="/login"
+      >
+        <i class="icon-log-out"></i>
+        Cerrar sesión
+      </button>
+    </ng-container>
+  </div>
 </div>

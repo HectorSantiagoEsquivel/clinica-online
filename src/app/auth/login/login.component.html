@@ -1,4 +1,4 @@
-<div class="login-container">
+<div class="login-container"[appSpinner]="cargando">
   <h2>Iniciar Sesión</h2>
   <form (ngSubmit)="login()" #loginForm="ngForm">
     <input
