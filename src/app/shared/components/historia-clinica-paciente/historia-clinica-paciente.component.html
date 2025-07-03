@@ -1,0 +1,31 @@
+<div *ngIf="cargando">Cargando historia clínica...</div>
+
+<div *ngIf="!cargando && historias.length === 0">
+  No hay historias clínicas registradas.
+</div>
+
+<div *ngIf="!cargando && historias.length > 0">
+  <div *ngFor="let h of historias" class="historia-card">
+    <h3>Turno del {{ h.fechaTurno }}</h3>
+    <p><strong>Paciente:</strong> {{ h.pacienteNombre }}</p>
+    <p><strong>Especialista:</strong> {{ h.especialistaNombre }}</p>
+    <p><strong>Especialidad:</strong> {{ h.especialidad }}</p>
+    <p><strong>Altura:</strong> {{ h.historia.altura }} cm</p>
+    <p><strong>Peso:</strong> {{ h.historia.peso }} kg</p>
+    <p><strong>Temperatura:</strong> {{ h.historia.temperatura }} °C</p>
+    <p><strong>Presión:</strong> {{ h.historia.presion }}</p>
+
+    <div *ngIf="h.historia.datos_adicionales">
+      <h4>Datos adicionales</h4>
+      <ul>
+        <li *ngFor="let clave of objectKeys(h.historia.datos_adicionales)">
+          <strong>{{ clave }}:</strong> {{ h.historia.datos_adicionales[clave] }}
+        </li>
+      </ul>
+    </div>
+
+    <p><strong>Reseña:</strong> {{ h.resena }}</p>
+    <hr />
+  </div>
+</div>
+

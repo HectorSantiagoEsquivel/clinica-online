@@ -43,4 +43,17 @@ export class EspecialidadService {
 
     return from(promesa);
   }
+
+  async obtenerEspecialidadPorId(id: string): Promise<{ id: string, nombre: string }> 
+  {
+    const { data, error } = await this.supabase.client
+      .from('especialidades')
+      .select('id, nombre')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
 }

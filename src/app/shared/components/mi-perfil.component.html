@@ -1,40 +1,55 @@
 <section class="perfil">
   <h2>Mi Perfil</h2>
 
-  <div class="perfil-card" *ngIf="usuario">
-    <div class="imagenes">
-      <img
-        class="img-perfil"
-        *ngIf="usuario.imagen_perfil"
-        [src]="usuario.imagen_perfil"
-        alt="Imagen de perfil"
-      />
-      <img
-        class="img-extra"
-        *ngIf="usuario.imagen_extra"
-        [src]="usuario.imagen_extra"
-        alt=""
-      />
-    </div>
+  <!-- Tabs solo para paciente -->
+  <div *ngIf="usuario?.rol === 'paciente'" class="tabs">
+    <button (click)="tabActivo = 'perfil'" [class.active]="tabActivo === 'perfil'">Perfil</button>
+    <button (click)="tabActivo = 'historia'" [class.active]="tabActivo === 'historia'">Historia Clínica</button>
+  </div>
 
-    <div class="datos">
-      <p><strong>Nombre:</strong> {{ usuario.nombre }} {{ usuario.apellido }}</p>
-      <p><strong>Email:</strong> {{ usuario.email }}</p>
-      <p><strong>DNI:</strong> {{ usuario.dni }}</p>
-      <p><strong>Edad:</strong> {{ calcularEdad(usuario.fecha_nacimiento) }}</p>
-      <p><strong>Rol:</strong> {{ usuario.rol }}</p>
+  <!-- TAB: Perfil -->
+  <div *ngIf="tabActivo === 'perfil'">
+    <div class="perfil-card" *ngIf="usuario">
+      <div class="imagenes">
+        <img
+          class="img-perfil"
+          *ngIf="usuario.imagen_perfil"
+          [src]="usuario.imagen_perfil"
+          alt="Imagen de perfil"
+        />
+        <img
+          class="img-extra"
+          *ngIf="usuario.imagen_extra"
+          [src]="usuario.imagen_extra"
+          alt=""
+        />
+      </div>
 
-      <p *ngIf="usuario.rol === 'paciente' && usuario.obra_social">
-        <strong>Obra social:</strong> {{ usuario.obra_social }}
-      </p>
+      <div class="datos">
+        <p><strong>Nombre:</strong> {{ usuario.nombre }} {{ usuario.apellido }}</p>
+        <p><strong>Email:</strong> {{ usuario.email }}</p>
+        <p><strong>DNI:</strong> {{ usuario.dni }}</p>
+        <p><strong>Edad:</strong> {{ calcularEdad(usuario.fecha_nacimiento) }}</p>
+        <p><strong>Rol:</strong> {{ usuario.rol }}</p>
 
-      <div *ngIf="usuario.rol === 'especialista' && especialidades.length">
-        <p><strong>Especialidades:</strong></p>
-        <ul>
-          <li *ngFor="let esp of especialidades">{{ esp.nombre }}</li>
-        </ul>
+        <p *ngIf="usuario.rol === 'paciente' && usuario.obra_social">
+          <strong>Obra social:</strong> {{ usuario.obra_social }}
+        </p>
+
+        <div *ngIf="usuario.rol === 'especialista' && especialidades.length">
+          <p><strong>Especialidades:</strong></p>
+          <ul>
+            <li *ngFor="let esp of especialidades">{{ esp.nombre }}</li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
+
     <app-mis-horarios-especialista *ngIf="usuario?.rol === 'especialista'"></app-mis-horarios-especialista>
+  </div>
+
+  <!-- TAB: Historia Clínica -->
+  <div *ngIf="tabActivo === 'historia'">
+    <app-historia-clinica-paciente></app-historia-clinica-paciente>
+  </div>
 </section>

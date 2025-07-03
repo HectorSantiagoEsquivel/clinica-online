@@ -4,16 +4,18 @@ import { AuthService } from '../../auth/auth.service';
 import { EspecialidadService } from '../../shared/services/especialidad.service'; // Servicio para traer especialidades
 import { CommonModule } from '@angular/common';
 import { MisHorariosEspecialistaComponent } from '../../turnos/mis-horarios-especialista/mis-horarios-especialista.component';
+import { HistoriaClinicaPacienteComponent } from './historia-clinica-paciente/historia-clinica-paciente.component';
 
 @Component({
   selector: 'app-mi-perfil',
   templateUrl: './mi-perfil.component.html',
-  imports: [CommonModule, MisHorariosEspecialistaComponent],
+  imports: [CommonModule, MisHorariosEspecialistaComponent,HistoriaClinicaPacienteComponent],
   styleUrls: ['./mi-perfil.component.scss'],
 })
 export class MiPerfilComponent implements OnInit {
   usuario?: Usuario | null;
   especialidades: { id: string; nombre: string }[] = [];
+  tabActivo: 'perfil' | 'historia' = 'perfil';
 
   constructor(
     private authService: AuthService,

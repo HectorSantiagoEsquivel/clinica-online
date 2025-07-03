@@ -187,6 +187,17 @@ export class AuthService {
   }
 
 
+  async obtenerUsuarioPorId(id: string): Promise<Usuario> {
+    const { data, error } = await this.supabase.client
+      .from('usuarios')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    return this.cargarImagenesPerfil(data);
+  }
 
 
 
