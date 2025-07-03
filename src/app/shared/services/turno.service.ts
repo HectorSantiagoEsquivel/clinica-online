@@ -150,4 +150,127 @@ export class TurnosService {
 
     if (error) throw error;
   }
+
+  async getTurnosPorEspecialidad(): Promise<{ especialidad: string, cantidad: number }[]> {
+    const { data, error } = await this.supabase.client
+      .from('turnos')
+      .select('especialidadId')
+      .not('especialidadId', 'is', null);
+
+    if (error) throw error;
+
+    const conteo = new Map<string, number>();
+    for (const turno of data) {
+      const espId = turno.especialidadId;
+      conteo.set(espId, (conteo.get(espId) || 0) + 1);
+    }
+
+    const resultados: { especialidad: string, cantidad: number }[] = [];
+    for (const [id, cantidad] of conteo.entries()) {
+      const { data: esp, error: errEsp } = await this.supabase.client
+        .from('especialidades')
+        .select('nombre')
+        .eq('id', id)
+        .single();
+
+      if (errEsp || !esp) {
+        console.warn(`No se encontró la especialidad con ID: ${id}`);
+        continue;
+      }
+
+      resultados.push({
+        especialidad: esp.nombre,
+        cantidad
+      });
+    }
+
+    return resultados;
+  }
+
+
+  async getTurnosPorDia(): Promise<{ fecha: string, cantidad: number }[]> {
+    const { data, error } = await this.supabase.client
+      .from('turnos')
+      .select('fecha');
+
+    if (error) throw error;
+
+    const conteo = new Map<string, number>();
+    for (const row of data) {
+      const fecha = new Date(row.fecha).toISOString().split('T')[0];
+      conteo.set(fecha, (conteo.get(fecha) || 0) + 1);
+    }
+
+    return Array.from(conteo.entries()).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+  }
+
+async getTurnosPorMedico(desde: string, hasta: string): Promise<{ medico: string, cantidad: number }[]> {
+  const { data, error } = await this.supabase.client
+    .from('turnos')
+    .select('especialistaId, usuarios:especialistaId(nombre, apellido)')
+    .gte('fecha', desde)
+    .lte('fecha', hasta);
+
+  if (error) throw error;
+
+  const conteo = new Map<string, { nombre: string, apellido: string, cantidad: number }>();
+
+  for (const row of data) {
+    const id = row.especialistaId;
+    const medico = Array.isArray(row.usuarios) ? row.usuarios[0] : row.usuarios;
+    if (!medico) continue;
+
+    if (conteo.has(id)) {
+      conteo.get(id)!.cantidad += 1;
+    } else {
+      conteo.set(id, {
+        nombre: medico.nombre,
+        apellido: medico.apellido,
+        cantidad: 1
+      });
+    }
+  }
+
+  return Array.from(conteo.values()).map(({ nombre, apellido, cantidad }) => ({
+    medico: `${nombre} ${apellido}`,
+    cantidad
+  }));
+}
+
+
+async getTurnosFinalizadosPorMedico(desde: string, hasta: string): Promise<{ medico: string, cantidad: number }[]> {
+  const { data, error } = await this.supabase.client
+    .from('turnos')
+    .select('especialistaId, usuarios:especialistaId(nombre, apellido)')
+    .eq('estado', 'realizado')
+    .gte('fecha', desde)
+    .lte('fecha', hasta);
+
+  if (error) throw error;
+
+  const conteo = new Map<string, { nombre: string, apellido: string, cantidad: number }>();
+
+  for (const row of data) {
+    const id = row.especialistaId;
+    const medico = Array.isArray(row.usuarios) ? row.usuarios[0] : row.usuarios;
+    if (!medico) continue;
+
+    if (conteo.has(id)) {
+      conteo.get(id)!.cantidad += 1;
+    } else {
+      conteo.set(id, {
+        nombre: medico.nombre,
+        apellido: medico.apellido,
+        cantidad: 1
+      });
+    }
+  }
+
+  return Array.from(conteo.values()).map(({ nombre, apellido, cantidad }) => ({
+    medico: `${nombre} ${apellido}`,
+    cantidad
+  }));
+}
+
+
 }

@@ -159,6 +159,24 @@ export class AuthService {
     return this.cargarImagenesPerfil(data);
   }
 
+  async getLogsPorFecha(): Promise<{ fecha: string, cantidad: number }[]> 
+  {
+    const { data, error } = await this.supabase.client
+      .from('log_ingresos')
+      .select('fecha');
+
+    if (error) throw error;
+
+    // Agrupar por día
+    const conteo = new Map<string, number>();
+    for (const row of data) {
+      const fecha = new Date(row.fecha).toISOString().split('T')[0]; // solo yyyy-mm-dd
+      conteo.set(fecha, (conteo.get(fecha) || 0) + 1);
+    }
+
+    return Array.from(conteo.entries()).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+  }
+
   async traerUsuariosPorPerfil(rol: 'paciente' | 'especialista' | 'admin'): Promise<Usuario[]> {
   const { data, error } = await this.supabase.client
     .from('usuarios')

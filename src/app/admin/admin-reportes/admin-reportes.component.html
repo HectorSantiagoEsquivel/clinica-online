@@ -1,0 +1,73 @@
+<div class="admin-reportes p-4">
+  <h1 class="text-2xl font-bold mb-4 text-center">Dashboard de Reportes</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <!-- 1. Ingresos -->
+    <section class="chart-container">
+      <h2 class="text-lg font-semibold mb-2 text-center">Log de Ingresos</h2>
+      <canvas
+        baseChart
+        [data]="ingresosData"
+        [options]="ingresosOptions"
+        chartType="line">
+      </canvas>
+    </section>
+
+    <!-- 2. Turnos por Especialidad -->
+    <section class="chart-container">
+      <h2 class="text-lg font-semibold mb-2 text-center">Turnos por Especialidad</h2>
+      <canvas
+        baseChart
+        [data]="porEspecialidadData"
+        [options]="porEspecialidadOptions"
+        chartType="bar">
+      </canvas>
+    </section>
+
+    <!-- 3. Turnos por Día -->
+    <section class="chart-container">
+      <h2 class="text-lg font-semibold mb-2 text-center">Turnos por Día</h2>
+      <canvas
+        baseChart
+        [data]="porDiaData"
+        [options]="porDiaOptions"
+        chartType="bar">
+      </canvas>
+    </section>
+
+    <!-- 4. Filtros -->
+    <section class="col-span-1 md:col-span-2 xl:col-span-3 flex flex-wrap gap-4 items-end justify-center">
+      <div>
+        <label class="block text-sm">Desde</label>
+        <input type="date" [(ngModel)]="desde" class="input-control" />
+      </div>
+      <div>
+        <label class="block text-sm">Hasta</label>
+        <input type="date" [(ngModel)]="hasta" class="input-control" />
+      </div>
+      <button (click)="filtrarPorMedico()" class="btn-primary">Filtrar</button>
+    </section>
+
+    <!-- 5. Solicitados por Médico -->
+    <section class="chart-container">
+      <h3 class="text-md font-medium mb-2 text-center">Solicitados por Médico</h3>
+      <canvas
+        baseChart
+        [data]="solicitadosPorMedicoData"
+        [options]="medicoOptions"
+        chartType="bar">
+      </canvas>
+    </section>
+
+    <!-- 6. Finalizados por Médico -->
+    <section class="chart-container">
+      <h3 class="text-md font-medium mb-2 text-center">Finalizados por Médico</h3>
+      <canvas
+        baseChart
+        [data]="finalizadosPorMedicoData"
+        [options]="medicoOptions"
+        chartType="bar">
+      </canvas>
+    </section>
+  </div>
+</div>
