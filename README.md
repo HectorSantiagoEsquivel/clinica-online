@@ -1,59 +1,54 @@
-# ClinicaOnline
+# 🏥 Clínica Online
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.10.
+Este proyecto es una app web hecha en Angular y Supabase que simula una clínica online. Permite que pacientes pidan turnos, los especialistas los atiendan, y los administradores gestionen todo desde un panel.
 
-## Development server
+## 👤 Login / Registro
+- Cualquier usuario puede registrarse como **paciente** o **especialista**.
+- Los especialistas deben ser habilitados por un **administrador** para poder atender.
+- También hay usuarios **admin**, creados manualmente.
 
-To start a local development server, run:
+## 🏠 Acceso según rol
 
-```bash
-ng serve
-```
+| Rol          | Accede a...                                             |
+|--------------|---------------------------------------------------------|
+| Paciente     | Pedir turnos, ver historial, exportar historia clínica |
+| Especialista | Gestionar turnos, cargar historia clínica               |
+| Admin        | Panel de usuarios, habilitación, estadísticas           |
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🖼️ Pantallas principales
 
-## Code scaffolding
+| Pantalla                        | Captura                                                                 |
+|---------------------------------|-------------------------------------------------------------------------|
+| Login                           | ![Login](src/assets/screenshots/login.png)                             |
+| Registro                        | ![Registro](src/assets/screenshots/register.png)                       |
+| Vista Paciente: Turnos         | ![Paciente - Turnos](src/assets/screenshots/paciente-turnos.png)       |
+| Vista Paciente: Historia clínica | ![Paciente - Historia](src/assets/screenshots/paciente-historia.png)  |
+| Vista Especialista             | ![Especialista](src/assets/screenshots/especialista.png)               |
+| Panel Admin                    | ![Admin Panel](src/assets/screenshots/admin.png)                        |
+| Reportes y Gráficos            | ![Gráficos](src/assets/screenshots/reportes.png)                        |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 📁 Secciones y qué contiene cada una
 
-```bash
-ng generate component component-name
-```
+- **Inicio**: muestra el panel principal según el rol.
+- **Turnos**:
+  - Paciente: pedir/ver turnos.
+  - Especialista: gestionar y cargar historias clínicas.
+- **Mi perfil**:
+  - Ver datos personales.
+  - Descargar historia clínica (paciente).
+- **Administración** (solo admin):
+  - Alta usuarios.
+  - Habilitar especialistas.
+  - Ver estadísticas con gráficos descargables.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 📦 Cómo correr el proyecto
 
-```bash
-ng generate --help
-```
+1. Cloná el repositorio.
+2. Instalá dependencias: `npm install`
+3. Configurá `environment.ts` con tu URL y API KEY de Supabase.
+4. Ejecutá: `ng serve`
+5. Abrí `http://localhost:4200` en el navegador
 
-## Building
+---
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+> Proyecto realizado como entrega final para la materia *[Nombre de la materia]* en *[Nombre de la institución]*.
