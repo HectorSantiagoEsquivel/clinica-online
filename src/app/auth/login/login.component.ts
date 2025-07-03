@@ -4,13 +4,33 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { SpinnerDirective } from '../../shared/directives/spinner.directive';
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  query,
+  stagger
+} from '@angular/animations';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule,SpinnerDirective],
+  imports: [CommonModule, FormsModule, SpinnerDirective],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  animations: [
+    trigger('staggerFade', [
+      transition(':enter', [
+        query('.fade-item', [
+          style({ opacity: 0, transform: 'translateY(20px)' }),
+          stagger(100, [
+            animate('400ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+          ])
+        ], { optional: true })
+      ])
+    ])
+  ]
 })
 export class LoginComponent {
   email: string = '';
@@ -21,15 +41,15 @@ export class LoginComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
   async login() {
-    this.cargando=true;
+    this.cargando = true;
     this.error = null;
     try {
       await this.auth.login(this.email, this.password);
-      this.router.navigate(['/home']); // Redirigir según tu app
+      this.router.navigate(['/home']);
     } catch (err: any) {
       this.error = this.traducirError(err.message);
     }
-    this.cargando=false;
+    this.cargando = false;
   }
 
   private traducirError(mensaje: string): string {
