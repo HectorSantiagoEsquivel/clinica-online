@@ -2,13 +2,51 @@
   <h2>Registro</h2>
   <form [formGroup]="form" (ngSubmit)="registrar()">
 
-    <!-- Datos básicos -->
+    <!-- Nombre -->
     <input type="text" placeholder="Nombre" formControlName="nombre" />
+    <div *ngIf="f['nombre'].touched && f['nombre'].invalid" class="field-error">
+      <small *ngIf="f['nombre'].errors?.['required']">El nombre es obligatorio.</small>
+      <small *ngIf="f['nombre'].errors?.['pattern']">El nombre solo debe contener letras.</small>
+    </div>
+
+    <!-- Apellido -->
     <input type="text" placeholder="Apellido" formControlName="apellido" />
+    <div *ngIf="f['apellido'].touched && f['apellido'].invalid" class="field-error">
+      <small *ngIf="f['apellido'].errors?.['required']">El apellido es obligatorio.</small>
+      <small *ngIf="f['apellido'].errors?.['pattern']">El apellido solo debe contener letras.</small>
+    </div>
+
+    <!-- Email -->
     <input type="email" placeholder="Email" formControlName="email" />
+    <div *ngIf="f['email'].touched && f['email'].invalid" class="field-error">
+      <small *ngIf="f['email'].errors?.['required']">El correo es obligatorio.</small>
+      <small *ngIf="f['email'].errors?.['email']">Debe ser un correo válido.</small>
+    </div>
+
+    <!-- Contraseña -->
     <input type="password" placeholder="Contraseña" formControlName="password" />
+    <div *ngIf="f['password'].touched && f['password'].invalid" class="field-error">
+      <small *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria.</small>
+      <small *ngIf="f['password'].errors?.['minlength']">Debe tener al menos 6 caracteres.</small>
+    </div>
+
+    <!-- Confirmar Contraseña -->
+    <input type="password" placeholder="Confirmar Contraseña" formControlName="confirmarPassword" />
+    <div *ngIf="(f['confirmarPassword'].touched || submitted) && form.errors?.['passwordsNoCoinciden']" class="field-error">
+      <small>Las contraseñas no coinciden.</small>
+    </div>
+
+    <!-- DNI -->
     <input type="text" placeholder="DNI" formControlName="dni" />
+    <div *ngIf="f['dni'].touched && f['dni'].invalid" class="field-error">
+      <small *ngIf="f['dni'].errors?.['required']">El DNI es obligatorio.</small>
+    </div>
+
+    <!-- Fecha de nacimiento -->
     <input type="date" formControlName="fecha_nacimiento" />
+    <div *ngIf="f['fecha_nacimiento'].touched && f['fecha_nacimiento'].invalid" class="field-error">
+      <small *ngIf="f['fecha_nacimiento'].errors?.['required']">La fecha de nacimiento es obligatoria.</small>
+    </div>
 
     <!-- Selector de rol -->
     <div>
@@ -22,14 +60,12 @@
     </div>
 
     <!-- Especialidades (solo especialista) -->
-<!-- Especialidades (solo especialista) -->
     <div *ngIf="rolSeleccionado === 'especialista'" formArrayName="especialidades">
-    <div *ngFor="let esp of especialidades.controls; let i = index">
+      <div *ngFor="let esp of especialidades.controls; let i = index">
         <input [formControlName]="i" placeholder="Especialidad {{ i + 1 }}" />
+      </div>
+      <button type="button" (click)="agregarEspecialidad()">+ Añadir especialidad</button>
     </div>
-    <button type="button" (click)="agregarEspecialidad()">+ Añadir especialidad</button>
-    </div>
-
 
     <!-- Subida de imágenes -->
     <div>
@@ -37,7 +73,18 @@
       <input *ngIf="rolSeleccionado === 'paciente'" type="file" (change)="onFileSelected($event, true)" />
     </div>
 
-    <button type="submit" [disabled]="form.invalid">Registrarse</button>
+    <!-- CAPTCHA -->
+    <div class="captcha-container">
+      <re-captcha 
+        (resolved)="onCaptchaResolved($event)" 
+        siteKey="6LdQY3YrAAAAACgsrdnhmj5b2DBPIypDyUVK15pE">
+      </re-captcha>
+    </div>
+
+    <!-- Botón submit -->
+    <button type="submit" [disabled]="form.invalid || !captchaResuelto">Registrarse</button>
+
+    <!-- Mensaje de error general -->
     <div class="error" *ngIf="errorMsg">{{ errorMsg }}</div>
   </form>
 </div>

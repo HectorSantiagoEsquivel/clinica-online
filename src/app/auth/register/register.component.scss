@@ -18,10 +18,20 @@
   input[type="file"] {
     width: 100%;
     padding: 0.75rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 1rem;
+  }
+
+  .field-error {
+    margin-bottom: 0.75rem;
+
+    small {
+      color: red;
+      font-size: 0.85rem;
+      display: block;
+    }
   }
 
   button {
@@ -37,11 +47,20 @@
     &:hover {
       background-color: #00796b;
     }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
   }
 
   .error {
     margin-top: 1rem;
     color: red;
     text-align: center;
+  }
+
+  .captcha-container {
+    margin-bottom: 1rem;
   }
 }
