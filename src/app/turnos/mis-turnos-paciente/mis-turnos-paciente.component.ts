@@ -8,6 +8,7 @@ import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { HistoriaClinicaService } from '../../shared/services/historia.service';
 
 @Component({
   selector: 'app-mis-turnos-paciente',
@@ -26,31 +27,72 @@ export class MisTurnosPacienteComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private turnosService: TurnosService
+    private turnosService: TurnosService,
+    private historiaClinicaService: HistoriaClinicaService,
   ) {}
 
-  ngOnInit(): void {
-    this.cargando = true;
-    this.authService.getUserProfile().then((usuario) => {
-      this.usuario = usuario;
-      this.sub = this.turnosService
-        .obtenerTurnos(usuario.id, 'paciente')
-        .subscribe((turnos) => {
-          this.turnos = turnos.sort((a, b) =>
-            new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-          );
-          this.actualizarFiltro('');
-          this.cargando = false;
+ngOnInit(): void {
+  this.cargando = true;
+
+  this.authService.getUserProfile().then((usuario) => {
+    this.usuario = usuario;
+
+    this.sub = this.turnosService
+      .obtenerTurnos(usuario.id, 'paciente')
+      .subscribe(async (turnos) => {
+        // Ordenar turnos por fecha descendente
+        this.turnos = turnos.sort(
+          (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+        );
+
+        // Cargar historia clínica para cada turno
+        const cargarHistorias = this.turnos.map(async (turno) => {
+          const historias = await this.historiaClinicaService.obtenerPorTurno(turno.id);
+          const historia = historias[0];
+
+          // Validar y parsear camposDinamicos si vienen como string
+          if (historia && typeof historia.camposDinamicos === 'string') {
+            try {
+              historia.camposDinamicos = JSON.parse(historia.camposDinamicos);
+            } catch {
+              historia.camposDinamicos = {}; // fallback
+            }
+          }
+
+          turno.historiaClinica = historia || undefined;
         });
-    });
-  }
+
+        await Promise.all(cargarHistorias);
+
+        this.actualizarFiltro('');
+        this.cargando = false;
+      });
+  });
+}
 
   actualizarFiltro(valor: string): void {
     this.filtro = valor.toLowerCase();
     if (this.filtro.length >= 3) {
-      this.turnosFiltrados = this.turnos.filter(turno =>
-        JSON.stringify(turno).toLowerCase().includes(this.filtro)
-      );
+      this.turnosFiltrados = this.turnos.filter(turno => {
+        const textoBase = JSON.stringify(turno).toLowerCase();
+
+        let textoHistoria = '';
+        if (turno.historiaClinica) {
+          const hc = turno.historiaClinica;
+          textoHistoria += `${hc.altura} ${hc.peso} ${hc.temperatura} ${hc.presion || ''}`;
+
+          // Incluir campos dinámicos
+          if (hc.camposDinamicos) {
+            Object.entries(hc.camposDinamicos).forEach(([key, value]) => {
+              textoHistoria += ` ${key} ${value}`;
+            });
+          }
+        }
+
+        const textoCompleto = textoBase + ' ' + textoHistoria.toLowerCase();
+
+        return textoCompleto.includes(this.filtro);
+      });
     } else {
       this.turnosFiltrados = [...this.turnos];
     }
