@@ -52,6 +52,21 @@ export class LoginComponent {
     this.cargando = false;
   }
 
+  autocompletar(tipo: 'paciente' | 'especialista' | 'admin') {
+    switch (tipo) {
+      case 'paciente':
+        this.email = 'fresh.pelican9473@maildrop.cc';
+        break;
+      case 'especialista':
+        this.email = 'meaty.eel8794@maildrop.cc';
+        break;
+      case 'admin':
+        this.email = 'hectorsantiagoesquivel@gmail.com';
+        break;
+    }
+    this.password = 'contraseña';
+  }
+
   private traducirError(mensaje: string): string {
     switch (mensaje) {
       case 'Invalid login credentials':

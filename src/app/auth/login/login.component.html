@@ -1,27 +1,32 @@
 <div class="login-container">
+  <h2>Iniciar Sesión</h2>
   <form (ngSubmit)="login()">
-    <div class="form-login" [@staggerFade]>
-      <h2 class="fade-item">Iniciar Sesión</h2>
-
-      <div class="fade-item">
-        <label for="email">Email:</label>
-        <input type="email" [(ngModel)]="email" name="email" required />
+    <div class="fade-item">
+      <div class="quick-buttons">
+        <button type="button" (click)="autocompletar('paciente')">Paciente</button>
+        <button type="button" (click)="autocompletar('especialista')">Especialista</button>
+        <button type="button" (click)="autocompletar('admin')">Admin</button>
       </div>
+    </div>
 
-      <div class="fade-item">
-        <label for="password">Contraseña:</label>
-        <input type="password" [(ngModel)]="password" name="password" required />
-      </div>
+    <div class="fade-item">
+      <label for="email">Email:</label>
+      <input type="email" [(ngModel)]="email" name="email" required />
+    </div>
 
-      <div class="fade-item">
-        <button type="submit" [disabled]="cargando" [appSpinner]="cargando">
-          Ingresar
-        </button>
-      </div>
+    <div class="fade-item">
+      <label for="password">Contraseña:</label>
+      <input type="password" [(ngModel)]="password" name="password" required />
+    </div>
 
-      <div *ngIf="error" class="fade-item error">
-        {{ error }}
-      </div>
+    <div class="fade-item">
+      <button type="submit" [disabled]="cargando" [appSpinner]="cargando">
+        Ingresar
+      </button>
+    </div>
+
+    <div *ngIf="error" class="fade-item error">
+      {{ error }}
     </div>
   </form>
 </div>
