@@ -4,6 +4,8 @@ import { AdminService } from './admin.service';
 import { Usuario } from '../shared/models/usuario.model';
 import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-admin',
@@ -24,7 +26,8 @@ export class AdminComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private adminService: AdminService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -127,4 +130,9 @@ export class AdminComponent implements OnInit {
       this.cargando = false;
     }
   }
+
+  verHistoria(usuario: Usuario) {
+  this.router.navigate(['/historia-clinica', usuario.id]);
+  }
+
 }

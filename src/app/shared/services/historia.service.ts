@@ -34,7 +34,17 @@ export class HistoriaClinicaService {
       .order('fecha_creacion', { ascending: false });
     if (error) throw error;
     return data;
-  }
+    }
+
+    async obtenerPorTurno(turnoId: string) {
+        const { data, error } = await this.supabase
+        .from('historia_clinica')
+        .select('*')
+        .eq('turno_id', turnoId)
+        .order('fecha_creacion', { ascending: false });
+        if (error) throw error;
+        return data;
+    }
 
   async obtenerHistoriaPorEspecialista(especialistaId: string) {
     const { data, error } = await this.supabase

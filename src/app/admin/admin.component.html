@@ -29,6 +29,10 @@
           <button *ngIf="usuario.rol === 'especialista'" (click)="cambiarVerificacion(usuario)">
             {{ usuario.verificado ? 'Inhabilitar' : 'Habilitar' }}
           </button>
+            <button *ngIf="usuario.rol === 'paciente'" (click)="verHistoria(usuario)">
+            Ver historia clínica
+          </button>
+
         </td>
       </tr>
     </tbody>

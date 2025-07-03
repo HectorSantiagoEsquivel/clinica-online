@@ -41,6 +41,14 @@
         <button *ngIf="turno.estado === 'aceptado'" (click)="cargarHistoria(turno)">
           Cargar Historia Clínica
         </button>
+        <!---
+        <button
+          *ngIf="turno.historiaClinica"
+          (click)="verDetalleConsulta(turno)"
+          class="btn btn-sm btn-info">
+          Ver detalle de consulta
+        </button>
+        -->
 
         <!-- Mostrar reseña si ya existe -->
         <button *ngIf="turno.resena" (click)="verResena(turno.resena)">Ver Reseña</button>

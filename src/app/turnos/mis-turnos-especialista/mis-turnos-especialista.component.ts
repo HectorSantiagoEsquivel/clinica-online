@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router'; 
+import { HistoriaClinicaService } from '../../shared/services/historia.service';
 
 @Component({
   selector: 'app-mis-turnos-especialista',
@@ -28,35 +29,79 @@ export class MisTurnosEspecialistaComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private turnosService: TurnosService,
-    private router: Router // 👈 Inyectamos Router
+    private historiaClinicaService: HistoriaClinicaService,
+    private router: Router 
   ) {}
 
-  ngOnInit(): void {
-    this.cargando = true;
-    this.authService.getUserProfile().then((usuario) => {
-      this.usuario = usuario;
-      this.sub = this.turnosService
-        .obtenerTurnos(usuario.id, 'especialista')
-        .subscribe((turnos) => {
-          this.turnos = turnos.sort((a, b) =>
-            new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-          );
-          this.actualizarFiltro('');
-          this.cargando = false;
+ngOnInit(): void {
+  this.cargando = true;
+
+  this.authService.getUserProfile().then((usuario) => {
+    this.usuario = usuario;
+
+    this.sub = this.turnosService
+      .obtenerTurnos(usuario.id, 'especialista')
+      .subscribe(async (turnos) => {
+        // Ordenar turnos por fecha descendente
+        this.turnos = turnos.sort(
+          (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+        );
+
+        // Cargar historia clínica para cada turno
+        const cargarHistorias = this.turnos.map(async (turno) => {
+          const historias = await this.historiaClinicaService.obtenerPorTurno(turno.id);
+          const historia = historias[0];
+
+          // Validar y parsear camposDinamicos si vienen como string
+          if (historia && typeof historia.camposDinamicos === 'string') {
+            try {
+              historia.camposDinamicos = JSON.parse(historia.camposDinamicos);
+            } catch {
+              historia.camposDinamicos = {}; // fallback
+            }
+          }
+
+          turno.historiaClinica = historia || undefined;
         });
-    });
-  }
+
+        await Promise.all(cargarHistorias);
+
+        this.actualizarFiltro('');
+        this.cargando = false;
+      });
+  });
+}
+
+
 
   actualizarFiltro(valor: string): void {
     this.filtro = valor.toLowerCase();
     if (this.filtro.length >= 3) {
-      this.turnosFiltrados = this.turnos.filter(turno =>
-        JSON.stringify(turno).toLowerCase().includes(this.filtro)
-      );
+      this.turnosFiltrados = this.turnos.filter(turno => {
+        const textoBase = JSON.stringify(turno).toLowerCase();
+
+        let textoHistoria = '';
+        if (turno.historiaClinica) {
+          const hc = turno.historiaClinica;
+          textoHistoria += `${hc.altura} ${hc.peso} ${hc.temperatura} ${hc.presion || ''}`;
+
+          // Incluir campos dinámicos
+          if (hc.camposDinamicos) {
+            Object.entries(hc.camposDinamicos).forEach(([key, value]) => {
+              textoHistoria += ` ${key} ${value}`;
+            });
+          }
+        }
+
+        const textoCompleto = textoBase + ' ' + textoHistoria.toLowerCase();
+
+        return textoCompleto.includes(this.filtro);
+      });
     } else {
       this.turnosFiltrados = [...this.turnos];
     }
   }
+
 
   async aceptarTurno(turnoId: string) {
     try {
@@ -111,6 +156,39 @@ export class MisTurnosEspecialistaComponent implements OnInit, OnDestroy {
 
     this.router.navigate(['/cargar-historia', turno.id, turno.pacienteId]);
   }
+
+  verDetalleConsulta(turno: Turno) {
+    const hc = turno.historiaClinica;
+    if (!hc) {
+
+      Swal.fire('Sin historia', 'Este turno no tiene historia clínica cargada.', 'info');
+      return;
+    }
+    console.log('Historia:', hc);
+    console.log('Campos dinámicos:', hc.camposDinamicos);
+    let html = `
+      <strong>Altura:</strong> ${hc.altura || '-'} cm<br>
+      <strong>Peso:</strong> ${hc.peso || '-'} kg<br>
+      <strong>Temperatura:</strong> ${hc.temperatura || '-'} °C<br>
+      <strong>Presión:</strong> ${hc.presion || '-'}<br>
+    `;
+
+    if (hc.camposDinamicos) {
+      html += '<hr><strong>Campos adicionales:</strong><br>';
+      for (const clave in hc.camposDinamicos) {
+        html += `<strong>${clave}:</strong> ${hc.camposDinamicos[clave]}<br>`;
+      }
+    }
+
+    Swal.fire({
+      title: 'Detalle de Consulta',
+      html,
+      icon: 'info',
+      confirmButtonText: 'Cerrar',
+      width: '600px'
+    });
+  }
+
 
   async finalizarTurno(turnoId: string) {
     const { value: resena } = await Swal.fire({

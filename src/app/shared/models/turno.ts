@@ -32,4 +32,12 @@ export interface Turno {
   especialidad?: {
     nombre: string;
   };
+
+  historiaClinica?: {
+    altura?: number;
+    peso?: number;
+    temperatura?: number;
+    presion?: string;
+    camposDinamicos?: { [clave: string]: string };
+  };
 }
