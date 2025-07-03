@@ -1,1 +1,20 @@
-<p>pacientes-atendidos works!</p>
+<div *ngIf="cargando" class="cargando">Cargando pacientes atendidos...</div>
+
+<div *ngIf="!cargando && pacientes.length === 0" class="vacio">
+  No has atendido a ningún paciente aún.
+</div>
+
+<div *ngIf="!cargando && pacientes.length > 0">
+  <h2>Pacientes atendidos</h2>
+  <ul class="paciente-lista">
+    <li *ngFor="let paciente of pacientes" class="paciente-item">
+      <div class="info">
+        <div class="nombre">{{ paciente.nombre }} {{ paciente.apellido }}</div>
+        <div class="email">{{ paciente.email }}</div>
+      </div>
+      <button (click)="verHistoria(paciente)" class="btn-historia">
+        Ver historia clínica
+      </button>
+    </li>
+  </ul>
+</div>

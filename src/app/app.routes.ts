@@ -16,6 +16,8 @@ import { MisTurnosPacienteComponent } from './turnos/mis-turnos-paciente/mis-tur
 import { TurnosAdminComponent } from './turnos/turnos-admin/turnos-admin.component';
 import { SolicitarTurnoComponent } from './turnos/solicitar-turnos/solicitar-turnos.component';
 import { CargarHistoriaClinicaComponent } from './turnos/cargar-historia-clinica/cargar-historia-clinica.component';
+import { PacientesAtendidosComponent } from './shared/components/pacientes-atendidos/pacientes-atendidos.component';
+import { HistoriaClinicaPacienteComponent } from './shared/components/historia-clinica-paciente/historia-clinica-paciente.component';
 
 export const routes: Routes = [
   {
@@ -74,10 +76,22 @@ export const routes: Routes = [
     data: { roles: ['especialista'] }
   },
   {
+    path: 'historia-clinica/:pacienteId',
+    component: HistoriaClinicaPacienteComponent,
+    canActivate: [authGuard, VerificadoGuard, RoleGuard],
+    data: { roles: ['especialista','admin'] }
+  },
+  {
     path: 'turnos-admin',
     component: TurnosAdminComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
     data: { roles: ['admin'] }
+  },
+  {
+    path: 'pacientes-atendidos',
+    component: PacientesAtendidosComponent,
+    canActivate: [authGuard, VerificadoGuard, RoleGuard],
+    data: { roles: ['especialista'] }
   },
   {
     path: '**',

@@ -8,7 +8,7 @@ import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router'; // 👈 Importante
+import { Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-mis-turnos-especialista',
@@ -103,7 +103,6 @@ export class MisTurnosEspecialistaComponent implements OnInit, OnDestroy {
     }
   }
 
-  // 🚀 Nuevo método: navegar a carga de historia clínica
   cargarHistoria(turno: Turno) {
     if (!turno.id || !turno.pacienteId) {
       Swal.fire('Error', 'Turno inválido', 'error');

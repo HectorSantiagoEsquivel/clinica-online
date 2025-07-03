@@ -7,6 +7,8 @@ import { TurnosService } from '../../services/turno.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EspecialidadService } from '../../../shared/services/especialidad.service';
+import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-historia-clinica-paciente',
@@ -34,33 +36,36 @@ export class HistoriaClinicaPacienteComponent implements OnInit {
     private historiaService: HistoriaClinicaService,
     private authService: AuthService,
     private turnosService: TurnosService,
-    private especialidadService: EspecialidadService
+    private especialidadService: EspecialidadService,
+    private route: ActivatedRoute
   ) {}
 
   async ngOnInit() {
     try {
-      this.usuarioActual = await this.authService.getUserProfile();
-      if (!this.usuarioActual) return;
+      const pacienteId = this.route.snapshot.paramMap.get('pacienteId');
+      if (!pacienteId) return;
 
-      const historias = await this.historiaService.obtenerHistoriaPorPaciente(this.usuarioActual.id);
-      const turnos = await this.turnosService.obtenerTurnosFiltrados({ pacienteId: this.usuarioActual.id });
+      const paciente = await this.authService.obtenerUsuarioPorId(pacienteId);
+      if (!paciente) return;
+
+      this.usuarioActual = paciente;
+
+      const historias = await this.historiaService.obtenerHistoriaPorPaciente(paciente.id);
+      const turnos = await this.turnosService.obtenerTurnosFiltrados({ pacienteId: paciente.id });
 
       const usuarios = new Map<string, Usuario>();
       const especialidades = new Map<string, string>();
 
-      // Cargar todos los especialistas que aparecen en los turnos
       for (const turno of turnos) {
-        if (!usuarios.has(turno.especialistaId)) 
-        {
+        if (!usuarios.has(turno.especialistaId)) {
           const especialista = await this.authService.obtenerUsuarioPorId(turno.especialistaId);
           usuarios.set(turno.especialistaId, especialista);
-        }   
-        if (!especialidades.has(turno.especialidadId)) 
-          {
+        }
+
+        if (!especialidades.has(turno.especialidadId)) {
           const especialidad = await this.especialidadService.obtenerEspecialidadPorId(turno.especialidadId);
           especialidades.set(turno.especialidadId, especialidad.nombre);
         }
-
       }
 
       this.historias = historias.map(historia => {
@@ -74,14 +79,14 @@ export class HistoriaClinicaPacienteComponent implements OnInit {
           fechaTurno: turno ? new Date(turno.fecha).toLocaleDateString() : 'Fecha desconocida',
           especialidad: especialidad ?? 'Especialidad desconocida',
           especialistaNombre: especialista ? `${especialista.nombre} ${especialista.apellido}` : 'Desconocido',
-          pacienteNombre: `${this.usuarioActual?.nombre} ${this.usuarioActual?.apellido}`
+          pacienteNombre: `${paciente.nombre} ${paciente.apellido}`
         };
       });
-
     } catch (error) {
       console.error('Error al cargar historias clínicas:', error);
     } finally {
       this.cargando = false;
     }
   }
+
 }
