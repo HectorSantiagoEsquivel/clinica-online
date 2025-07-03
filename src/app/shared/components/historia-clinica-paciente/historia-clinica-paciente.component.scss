@@ -1,41 +1,43 @@
 :host {
   display: block;
   padding: 1rem;
+  background-color: #f5f7fa; // fondo general suave
 }
 
 .historia-card {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-left: 6px solid #8b6b75; // un color suave para destacar
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-left: 6px solid #3b82f6; // azul profesional (Tailwind blue-600)
   border-radius: 10px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   h3 {
     margin-top: 0;
-    font-size: 1.2rem;
-    color: #444;
+    font-size: 1.25rem;
+    color: #1e293b; // gris oscuro
   }
 
   p {
     margin: 0.4rem 0;
     font-size: 0.95rem;
+    color: #374151;
 
     strong {
-      color: #333;
+      color: #1f2937;
     }
   }
 
-  h4 {
-    margin-top: 1rem;
-    font-size: 1rem;
-    color: #555;
+  .font-semibold {
+    font-weight: 600;
+    color: #0f172a;
   }
 
   ul {
@@ -44,19 +46,40 @@
 
     li {
       margin-bottom: 0.3rem;
+      color: #4b5563;
     }
   }
 
   hr {
     margin-top: 1.2rem;
     border: none;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #d1d5db;
   }
 }
 
 div[ngIf] {
   font-style: italic;
-  color: #888;
+  color: #6b7280;
   margin: 1rem 0;
   text-align: center;
+}
+
+/* Botón de PDF */
+button {
+  background-color: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #1d4ed8;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+  }
 }

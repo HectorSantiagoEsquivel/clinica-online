@@ -38,6 +38,6 @@ export interface Turno {
     peso?: number;
     temperatura?: number;
     presion?: string;
-    camposDinamicos?: { [clave: string]: string };
+    datos_adicionales?: { [clave: string]: string };
   };
 }

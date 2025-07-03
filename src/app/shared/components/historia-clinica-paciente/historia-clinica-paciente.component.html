@@ -1,31 +1,49 @@
-<div *ngIf="cargando">Cargando historia clínica...</div>
-
-<div *ngIf="!cargando && historias.length === 0">
-  No hay historias clínicas registradas.
+<!-- Botón de exportar PDF -->
+<div class="flex justify-end mb-4">
+  <button 
+    (click)="generarPdfDesdeTurnos()" 
+    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"
+  >
+    Descargar historia clínica en PDF
+  </button>
 </div>
 
-<div *ngIf="!cargando && historias.length > 0">
-  <div *ngFor="let h of historias" class="historia-card">
-    <h3>Turno del {{ h.fechaTurno }}</h3>
-    <p><strong>Paciente:</strong> {{ h.pacienteNombre }}</p>
-    <p><strong>Especialista:</strong> {{ h.especialistaNombre }}</p>
-    <p><strong>Especialidad:</strong> {{ h.especialidad }}</p>
-    <p><strong>Altura:</strong> {{ h.historia.altura }} cm</p>
-    <p><strong>Peso:</strong> {{ h.historia.peso }} kg</p>
-    <p><strong>Temperatura:</strong> {{ h.historia.temperatura }} °C</p>
-    <p><strong>Presión:</strong> {{ h.historia.presion }}</p>
+<!-- Lista de turnos -->
+<div *ngFor="let turno of turnos" class="mb-6">
+  <ng-container *ngIf="turno.historiaClinica">
+    
+    <!-- Aplicamos clase historia-card aquí -->
+    <div class="historia-card">
+      
+      <!-- Encabezado: Datos del turno -->
+      <h3 class="text-lg font-semibold mb-2">Turno de {{ turno.fecha | date }}</h3>
+      <p><strong>Especialidad:</strong> {{ turno.especialidad?.nombre || '—' }}</p>
+      <p><strong>Especialista:</strong> {{ turno.especialista?.nombre }} {{ turno.especialista?.apellido }}</p>
 
-    <div *ngIf="h.historia.datos_adicionales">
-      <h4>Datos adicionales</h4>
-      <ul>
-        <li *ngFor="let clave of objectKeys(h.historia.datos_adicionales)">
-          <strong>{{ clave }}:</strong> {{ h.historia.datos_adicionales[clave] }}
-        </li>
-      </ul>
+      <hr class="my-3" />
+
+      <!-- Datos clínicos -->
+      <p><strong>Altura:</strong> {{ turno.historiaClinica.altura }} cm</p>
+      <p><strong>Peso:</strong> {{ turno.historiaClinica.peso }} kg</p>
+      <p><strong>Temperatura:</strong> {{ turno.historiaClinica.temperatura }} °C</p>
+      <p><strong>Presión:</strong> {{ turno.historiaClinica.presion }}</p>
+
+      <!-- Campos adicionales -->
+      <div *ngIf="turno.historiaClinica?.datos_adicionales && getClavesAdicionales(turno.historiaClinica).length > 0" class="mt-2">
+        <p class="font-semibold">Campos adicionales:</p>
+        <ul class="list-disc list-inside">
+          <li *ngFor="let clave of getClavesAdicionales(turno.historiaClinica)">
+            {{ clave }}: {{ turno.historiaClinica?.datos_adicionales?.[clave] }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Reseña -->
+      <div class="mt-4">
+        <p class="font-semibold">Reseña del turno:</p>
+        <p>{{ turno.resena || '—' }}</p>
+      </div>
     </div>
 
-    <p><strong>Reseña:</strong> {{ h.resena }}</p>
-    <hr />
-  </div>
+  </ng-container>
 </div>
-

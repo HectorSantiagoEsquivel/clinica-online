@@ -86,8 +86,8 @@ ngOnInit(): void {
           textoHistoria += `${hc.altura} ${hc.peso} ${hc.temperatura} ${hc.presion || ''}`;
 
           // Incluir campos dinámicos
-          if (hc.camposDinamicos) {
-            Object.entries(hc.camposDinamicos).forEach(([key, value]) => {
+          if (hc.datos_adicionales) {
+            Object.entries(hc.datos_adicionales).forEach(([key, value]) => {
               textoHistoria += ` ${key} ${value}`;
             });
           }
@@ -165,7 +165,7 @@ ngOnInit(): void {
       return;
     }
     console.log('Historia:', hc);
-    console.log('Campos dinámicos:', hc.camposDinamicos);
+    console.log('Campos dinámicos:', hc.datos_adicionales);
     let html = `
       <strong>Altura:</strong> ${hc.altura || '-'} cm<br>
       <strong>Peso:</strong> ${hc.peso || '-'} kg<br>
@@ -173,10 +173,10 @@ ngOnInit(): void {
       <strong>Presión:</strong> ${hc.presion || '-'}<br>
     `;
 
-    if (hc.camposDinamicos) {
+    if (hc.datos_adicionales) {
       html += '<hr><strong>Campos adicionales:</strong><br>';
-      for (const clave in hc.camposDinamicos) {
-        html += `<strong>${clave}:</strong> ${hc.camposDinamicos[clave]}<br>`;
+      for (const clave in hc.datos_adicionales) {
+        html += `<strong>${clave}:</strong> ${hc.datos_adicionales[clave]}<br>`;
       }
     }
 

@@ -113,15 +113,25 @@ export class AuthService {
 
 
 
-  async login(email:string,password:string)
-  {
-    const{data,error} =await this.supabase.client.auth.signInWithPassword({
+  async login(email: string, password: string) {
+    const { data, error } = await this.supabase.client.auth.signInWithPassword({
       email,
       password,
     });
-    if(error) throw error;
+
+    if (error) throw error;
+    const userId = data.user?.id;
+    if (userId) {
+      await this.supabase.client.from('log_ingresos').insert([
+        {
+          usuario_id: userId,
+        },
+      ]);
+    }
+
     return data;
   }
+
 
   async logout()
   {

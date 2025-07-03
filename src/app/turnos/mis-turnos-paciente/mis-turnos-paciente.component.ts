@@ -82,8 +82,8 @@ ngOnInit(): void {
           textoHistoria += `${hc.altura} ${hc.peso} ${hc.temperatura} ${hc.presion || ''}`;
 
           // Incluir campos dinámicos
-          if (hc.camposDinamicos) {
-            Object.entries(hc.camposDinamicos).forEach(([key, value]) => {
+          if (hc.datos_adicionales) {
+            Object.entries(hc.datos_adicionales).forEach(([key, value]) => {
               textoHistoria += ` ${key} ${value}`;
             });
           }
