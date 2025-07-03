@@ -6,11 +6,10 @@ import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [FormsModule,CommonModule,ReactiveFormsModule],
+  imports: [FormsModule, CommonModule, ReactiveFormsModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
@@ -18,10 +17,12 @@ export class AdminComponent implements OnInit {
   usuarios: Usuario[] = [];
   crearForm!: FormGroup;
   imagenPerfilFile?: File;
+  imagenSecundariaFile?: File;
   cargando = false;
   errorMsg = '';
   successMsg = '';
   tabActiva: 'lista' | 'crear' = 'lista';
+  submitted = false;
 
   constructor(
     private fb: FormBuilder,
@@ -32,18 +33,66 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.crearForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
+      nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
+      apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarPassword: ['', Validators.required],
       dni: ['', Validators.required],
       fecha_nacimiento: ['', Validators.required],
       rol: ['paciente', Validators.required],
-      obra_social: [''],
+      obra_social: [{ value: '', disabled: true }],  // Inicialmente deshabilitado
       especialidades: this.fb.array([])
+    }, { validators: this.passwordsIguales });
+
+    // Suscripción al cambio de rol
+    this.crearForm.get('rol')?.valueChanges.subscribe((rol) => {
+      if (rol === 'paciente') {
+        this.crearForm.get('obra_social')?.enable();
+        this.crearForm.get('obra_social')?.setValidators(Validators.required);
+        this.crearForm.get('obra_social')?.updateValueAndValidity();
+
+        this.crearForm.setControl('especialidades', this.fb.array([]));
+      } else if (rol === 'especialista') {
+        this.crearForm.get('obra_social')?.setValue('');
+        this.crearForm.get('obra_social')?.clearValidators();
+        this.crearForm.get('obra_social')?.disable();
+        this.crearForm.get('obra_social')?.updateValueAndValidity();
+
+        this.crearForm.setControl('especialidades', this.fb.array([]));
+        if (this.especialidades.length === 0) {
+          this.agregarEspecialidad();
+        }
+      }
     });
 
+    this.crearForm.get('rol')?.updateValueAndValidity();
     this.cargarUsuarios();
+  }
+
+  passwordsIguales(group: FormGroup) {
+    const pass = group.get('password')?.value;
+    const confirm = group.get('confirmarPassword')?.value;
+    return pass === confirm ? null : { passwordsNoCoinciden: true };
+  }
+
+  get especialidades() {
+    return this.crearForm.get('especialidades') as FormArray;
+  }
+
+  get f() {
+    return this.crearForm.controls;
+  }
+
+  agregarEspecialidad() {
+    this.especialidades.push(this.fb.control('', Validators.required));
+  }
+
+  onFileSelected(event: Event, esSecundaria: boolean = false) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      esSecundaria ? this.imagenSecundariaFile = file : this.imagenPerfilFile = file;
+    }
   }
 
   async cargarUsuarios() {
@@ -63,36 +112,20 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  onFileSelected(event: Event) {
-    const target = event.target as HTMLInputElement;
-    if (target.files?.length) {
-      this.imagenPerfilFile = target.files[0];
-    }
-  }
-
-  get especialidades() {
-    return this.crearForm.get('especialidades') as FormArray;
-  }
-
-  agregarEspecialidad() {
-    this.especialidades.push(this.fb.control('', Validators.required));
-  }
-
   async crearUsuario() {
+    this.submitted = true;
     this.errorMsg = '';
     this.successMsg = '';
     this.cargando = true;
 
-    if (this.crearForm.invalid || !this.imagenPerfilFile) {
-      this.errorMsg = 'Todos los campos son obligatorios, incluyendo la imagen.';
+    const rol = this.crearForm.value.rol;
+    const esPaciente = rol === 'paciente';
+
+    if (this.crearForm.invalid || !this.imagenPerfilFile || (esPaciente && !this.imagenSecundariaFile)) {
+      this.errorMsg = 'Todos los campos son obligatorios, incluyendo las imágenes.';
       this.cargando = false;
       return;
     }
-
-    const form = this.crearForm.value;
-    const rol = form.rol;
-    const esEspecialista = rol === 'especialista';
-    const esPaciente = rol === 'paciente';
 
     const especialidadesSeleccionadas = this.especialidades.controls
       .map(ctrl => ctrl.value)
@@ -100,29 +133,30 @@ export class AdminComponent implements OnInit {
 
     const nuevoUsuario: Usuario = {
       id: '',
-      email: form.email,
-      nombre: form.nombre,
-      apellido: form.apellido,
-      dni: form.dni,
+      email: this.crearForm.value.email,
+      nombre: this.crearForm.value.nombre,
+      apellido: this.crearForm.value.apellido,
+      dni: this.crearForm.value.dni,
       rol,
-      verificado: esEspecialista ? false : true,
-      fecha_nacimiento: form.fecha_nacimiento,
-      obra_social: esPaciente ? form.obra_social || undefined : undefined
+      verificado: rol === 'especialista' ? false : true,
+      fecha_nacimiento: this.crearForm.value.fecha_nacimiento,
+      obra_social: esPaciente ? this.crearForm.value.obra_social || undefined : undefined
     };
 
     try {
       await this.authService.registrarse(
         nuevoUsuario,
-        form.password,
+        this.crearForm.value.password,
         this.imagenPerfilFile!,
-        undefined,
+        this.imagenSecundariaFile,
         especialidadesSeleccionadas
       );
-
       this.successMsg = 'Usuario creado exitosamente.';
       this.crearForm.reset({ rol: 'paciente' });
-      this.especialidades.clear();
+      this.submitted = false;
       this.imagenPerfilFile = undefined;
+      this.imagenSecundariaFile = undefined;
+      this.especialidades.clear();
       this.cargarUsuarios();
     } catch (error: any) {
       this.errorMsg = error.message || 'Error al crear el usuario.';
@@ -132,7 +166,6 @@ export class AdminComponent implements OnInit {
   }
 
   verHistoria(usuario: Usuario) {
-  this.router.navigate(['/historia-clinica', usuario.id]);
+    this.router.navigate(['/historia-clinica', usuario.id]);
   }
-
 }

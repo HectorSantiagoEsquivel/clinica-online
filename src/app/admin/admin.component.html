@@ -1,78 +1,152 @@
-<h2>Administración de Usuarios</h2>
+<div class="admin-container p-4 max-w-4xl mx-auto">
 
-<!-- Contenedor de pestañas -->
-<div class="tabs">
-  <button [class.active]="tabActiva === 'lista'" (click)="tabActiva = 'lista'">Usuarios</button>
-  <button [class.active]="tabActiva === 'crear'" (click)="tabActiva = 'crear'">Crear usuario</button>
-</div>
+  <!-- Tabs -->
+  <div class="flex gap-4 mb-6">
+<button class="btn" [class.active]="tabActiva === 'lista'" (click)="tabActiva = 'lista'">Lista de usuarios</button>
+<button class="btn" [class.active]="tabActiva === 'crear'" (click)="tabActiva = 'crear'">Crear usuario</button>
+  </div>
 
-<!-- SECCIÓN 1: LISTADO -->
-<section class="seccion" *ngIf="tabActiva === 'lista'">
-  <h3>Listado de usuarios</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Rol</th>
-        <th>Email</th>
-        <th>Verificado</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let usuario of usuarios">
-        <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
-        <td>{{ usuario.rol }}</td>
-        <td>{{ usuario.email }}</td>
-        <td>{{ usuario.verificado ? 'Sí' : 'No' }}</td>
-        <td>
-          <button *ngIf="usuario.rol === 'especialista'" (click)="cambiarVerificacion(usuario)">
-            {{ usuario.verificado ? 'Inhabilitar' : 'Habilitar' }}
-          </button>
-            <button *ngIf="usuario.rol === 'paciente'" (click)="verHistoria(usuario)">
-            Ver historia clínica
-          </button>
-
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</section>
-
-<!-- SECCIÓN 2: CREAR USUARIO -->
-<section class="seccion" *ngIf="tabActiva === 'crear'">
-  <h3>Crear nuevo usuario</h3>
-  <form [formGroup]="crearForm" (ngSubmit)="crearUsuario()">
-
-    <input formControlName="nombre" placeholder="Nombre" />
-    <input formControlName="apellido" placeholder="Apellido" />
-    <input formControlName="email" type="email" placeholder="Email" />
-    <input formControlName="password" type="password" placeholder="Contraseña" />
-    <input formControlName="dni" placeholder="DNI" />
-    <input formControlName="fecha_nacimiento" type="date" />
-
-    <select formControlName="rol">
-      <option value="paciente">Paciente</option>
-      <option value="especialista">Especialista</option>
-      <option value="admin">Administrador</option>
-    </select>
-
-    <!-- Obra social (solo para pacientes) -->
-    <input *ngIf="crearForm.value.rol === 'paciente'" formControlName="obra_social" placeholder="Obra social" />
-
-    <!-- Especialidades (solo para especialistas) -->
-    <div *ngIf="crearForm.value.rol === 'especialista'" formArrayName="especialidades">
-      <div *ngFor="let esp of especialidades.controls; let i = index">
-        <input [formControlName]="i" placeholder="Especialidad {{ i + 1 }}" />
-      </div>
-      <button type="button" (click)="agregarEspecialidad()">+ Añadir especialidad</button>
+  <!-- Lista de usuarios -->
+  <div *ngIf="tabActiva === 'lista'">
+    <h2 class="text-xl font-bold mb-4">Usuarios registrados</h2>
+    <div *ngIf="usuarios.length > 0; else sinUsuarios">
+      <table class="table-auto w-full text-sm border">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="p-2">Nombre</th>
+            <th class="p-2">Email</th>
+            <th class="p-2">Rol</th>
+            <th class="p-2">Verificado</th>
+            <th class="p-2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let usuario of usuarios" class="border-t">
+            <td class="p-2">{{ usuario.nombre }} {{ usuario.apellido }}</td>
+            <td class="p-2">{{ usuario.email }}</td>
+            <td class="p-2">{{ usuario.rol }}</td>
+            <td class="p-2">{{ usuario.verificado ? 'Sí' : 'No' }}</td>
+            <td class="p-2 flex gap-2">
+              <button *ngIf="usuario.rol === 'especialista'" class="btn btn-sm" (click)="cambiarVerificacion(usuario)">
+                {{ usuario.verificado ? 'Desverificar' : 'Verificar' }}
+              </button>
+              <button class="btn btn-sm bg-green-500" (click)="verHistoria(usuario)">
+                Ver historia
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+    <ng-template #sinUsuarios>
+      <p>No hay usuarios registrados aún.</p>
+    </ng-template>
+  </div>
 
-    <input type="file" (change)="onFileSelected($event)" />
+  <!-- Crear usuario -->
+  <div *ngIf="tabActiva === 'crear'" class="bg-white p-6 shadow-md rounded-xl space-y-4 max-w-2xl mx-auto">
+    <h2 class="text-xl font-bold mb-4">Crear nuevo usuario</h2>
 
-    <button type="submit">Crear usuario</button>
-  </form>
+    <!-- Feedback -->
+    <div *ngIf="errorMsg" class="bg-red-100 text-red-700 p-2 rounded">{{ errorMsg }}</div>
+    <div *ngIf="successMsg" class="bg-green-100 text-green-700 p-2 rounded">{{ successMsg }}</div>
 
-  <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
-  <p *ngIf="successMsg" class="success">{{ successMsg }}</p>
-</section>
+    <form [formGroup]="crearForm" (ngSubmit)="crearUsuario()" novalidate>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label>Nombre</label>
+          <input type="text" formControlName="nombre" class="input" />
+          <div *ngIf="submitted && f['nombre'].errors" class="text-red-500 text-sm">
+            {{ f['nombre'].errors['required'] ? 'Nombre es obligatorio' : 'Nombre inválido' }}
+          </div>
+        </div>
+
+        <div>
+          <label>Apellido</label>
+          <input type="text" formControlName="apellido" class="input" />
+          <div *ngIf="submitted && f['apellido'].errors" class="text-red-500 text-sm">
+            {{ f['apellido'].errors['required'] ? 'Apellido es obligatorio' : 'Apellido inválido' }}
+          </div>
+        </div>
+
+        <div>
+          <label>Email</label>
+          <input type="email" formControlName="email" class="input" />
+          <div *ngIf="submitted && f['email'].errors" class="text-red-500 text-sm">
+            {{ f['email'].errors['required'] ? 'Email es obligatorio' : 'Email inválido' }}
+          </div>
+        </div>
+
+        <div>
+          <label>DNI</label>
+          <input type="text" formControlName="dni" class="input" />
+          <div *ngIf="submitted && f['dni'].errors" class="text-red-500 text-sm">DNI obligatorio</div>
+        </div>
+
+        <div>
+          <label>Fecha de nacimiento</label>
+          <input type="date" formControlName="fecha_nacimiento" class="input" />
+          <div *ngIf="submitted && f['fecha_nacimiento'].errors" class="text-red-500 text-sm">Fecha requerida</div>
+        </div>
+
+        <div>
+          <label>Rol</label>
+          <select formControlName="rol" class="input">
+            <option value="paciente">Paciente</option>
+            <option value="especialista">Especialista</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Contraseña</label>
+          <input type="password" formControlName="password" class="input" />
+          <div *ngIf="submitted && f['password'].errors" class="text-red-500 text-sm">
+            {{ f['password'].errors['required'] ? 'Contraseña obligatoria' : 'Debe tener al menos 6 caracteres' }}
+          </div>
+        </div>
+
+        <div>
+          <label>Confirmar Contraseña</label>
+          <input type="password" formControlName="confirmarPassword" class="input" />
+          <div *ngIf="submitted && crearForm.errors?.['passwordsNoCoinciden']" class="text-red-500 text-sm">
+
+            Las contraseñas no coinciden
+          </div>
+        </div>
+
+        <!-- Obra social (solo pacientes) -->
+        <div *ngIf="crearForm.value.rol === 'paciente'" class="col-span-2">
+          <label>Obra social</label>
+          <input type="text" formControlName="obra_social" class="input" />
+        </div>
+
+        <!-- Especialidades (solo especialistas) -->
+        <div *ngIf="crearForm.value.rol === 'especialista'" class="col-span-2">
+          <label>Especialidades</label>
+          <div formArrayName="especialidades" class="space-y-2">
+            <div *ngFor="let esp of especialidades.controls; let i = index">
+              <input [formControlName]="i" placeholder="Ej: Cardiología" class="input" />
+            </div>
+          </div>
+          <button type="button" class="btn mt-2" (click)="agregarEspecialidad()">Agregar especialidad</button>
+        </div>
+
+        <!-- Imagen de perfil -->
+        <div class="col-span-2">
+          <label>Imagen de perfil</label>
+          <input type="file" (change)="onFileSelected($event)" />
+        </div>
+
+        <!-- Imagen secundaria (solo pacientes) -->
+        <div *ngIf="crearForm.value.rol === 'paciente'" class="col-span-2">
+          <label>Imagen secundaria</label>
+          <input type="file" (change)="onFileSelected($event, true)" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn w-full mt-4" [disabled]="cargando">
+        {{ cargando ? 'Creando...' : 'Crear usuario' }}
+      </button>
+    </form>
+  </div>
+</div>
