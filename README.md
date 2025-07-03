@@ -41,7 +41,7 @@ Este proyecto es una app web hecha en Angular y Supabase que simula una clínica
   - Habilitar especialistas.
   - Ver estadísticas con gráficos descargables.
 
-##URL:
-  ###https://clinica-online-27d07.web.app
+## URL:
+  ### https://clinica-online-27d07.web.app
 
 > Proyecto realizado como entrega final para la materia *Labo IV*
