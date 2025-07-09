@@ -17,7 +17,7 @@ export class SpinnerDirective implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['isLoading']) {
+    if (changes['isLoading'] && this.spinnerElement) {
       this.toggleSpinner(changes['isLoading'].currentValue);
     }
   }
@@ -38,7 +38,7 @@ private createSpinner() {
   const spinnerIcon = this.renderer.createElement('img');
   this.renderer.setAttribute(spinnerIcon, 'src', this.spinnerImageUrl);
   this.renderer.setStyle(spinnerIcon, 'width', '300px');
-  this.renderer.setStyle(spinnerIcon, 'animation', 'spin 2s linear infinite'); // 👈 Línea nueva
+  this.renderer.setStyle(spinnerIcon, 'animation', 'spin 2s linear infinite'); 
 
   this.renderer.appendChild(this.spinnerElement, spinnerIcon);
   this.renderer.appendChild(this.el.nativeElement, this.spinnerElement);

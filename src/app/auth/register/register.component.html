@@ -1,106 +1,111 @@
+<!-- Contenedor principal con spinner -->
 <div class="login-container" [appSpinner]="cargando">
-  <h2>Registro</h2>
-  <form [formGroup]="form" (ngSubmit)="registrar()">
 
-    <!-- Nombre -->
-    <input type="text" placeholder="Nombre" formControlName="nombre" />
-    <div *ngIf="f['nombre'].value">
-      Vista previa: {{ f['nombre'].value | capitalizarPrimeraLetra }}
+  <!-- Selección de rol inicial con botones -->
+  <div class="rol-selection" *ngIf="!form.get('rol')?.value">
+    <h2>Registrarse como...</h2>
+    <div class="rol-buttons">
+      <button type="button" (click)="form.get('rol')?.setValue('paciente')" [class.active]="form.get('rol')?.value === 'paciente'">
+        <img src="assets/UI/paciente.png" alt="Paciente" />
+        <span>Paciente</span>
+      </button>
+      <button type="button" (click)="form.get('rol')?.setValue('especialista')" [class.active]="form.get('rol')?.value === 'especialista'">
+        <img src="assets/UI/especialista.png" alt="Especialista" />
+        <span>Especialista</span>
+      </button>
     </div>
+  </div>
+
+  <!-- Formulario de registro -->
+  <form *ngIf="form.get('rol')?.value" [formGroup]="form" (ngSubmit)="registrar()">
+
+    <!-- Datos personales -->
+    <input type="text" placeholder="Nombre" formControlName="nombre" />
     <div *ngIf="f['nombre'].touched && f['nombre'].invalid" class="field-error">
       <small *ngIf="f['nombre'].errors?.['required']">El nombre es obligatorio.</small>
-      <small *ngIf="f['nombre'].errors?.['pattern']">El nombre solo debe contener letras.</small>
+      <small *ngIf="f['nombre'].errors?.['pattern']">Solo letras permitidas.</small>
     </div>
 
-    <!-- Apellido -->
     <input type="text" placeholder="Apellido" formControlName="apellido" />
-    <div *ngIf="f['apellido'].value">
-      Vista previa: {{ f['apellido'].value | capitalizarPrimeraLetra }}
-    </div>
     <div *ngIf="f['apellido'].touched && f['apellido'].invalid" class="field-error">
       <small *ngIf="f['apellido'].errors?.['required']">El apellido es obligatorio.</small>
-      <small *ngIf="f['apellido'].errors?.['pattern']">El apellido solo debe contener letras.</small>
+      <small *ngIf="f['apellido'].errors?.['pattern']">Solo letras permitidas.</small>
     </div>
 
-    <!-- Email -->
     <input type="email" placeholder="Email" formControlName="email" />
     <div *ngIf="f['email'].touched && f['email'].invalid" class="field-error">
       <small *ngIf="f['email'].errors?.['required']">El correo es obligatorio.</small>
       <small *ngIf="f['email'].errors?.['email']">Debe ser un correo válido.</small>
     </div>
 
-    <!-- Contraseña -->
     <input type="password" placeholder="Contraseña" formControlName="password" />
     <div *ngIf="f['password'].touched && f['password'].invalid" class="field-error">
       <small *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria.</small>
-      <small *ngIf="f['password'].errors?.['minlength']">Debe tener al menos 6 caracteres.</small>
+      <small *ngIf="f['password'].errors?.['minlength']">Mínimo 6 caracteres.</small>
     </div>
 
-    <!-- Confirmar Contraseña -->
     <input type="password" placeholder="Confirmar Contraseña" formControlName="confirmarPassword" />
     <div *ngIf="(f['confirmarPassword'].touched || submitted) && form.errors?.['passwordsNoCoinciden']" class="field-error">
       <small>Las contraseñas no coinciden.</small>
     </div>
 
-    <!-- DNI -->
     <input type="text" placeholder="DNI" formControlName="dni" />
     <div *ngIf="f['dni'].touched && f['dni'].invalid" class="field-error">
-      <small *ngIf="f['dni'].errors?.['required']">El DNI es obligatorio.</small>
+      <small>El DNI es obligatorio.</small>
     </div>
 
-    <!-- Fecha de nacimiento -->
     <input type="date" formControlName="fecha_nacimiento" />
     <div *ngIf="f['fecha_nacimiento'].touched && f['fecha_nacimiento'].invalid" class="field-error">
-      <small *ngIf="f['fecha_nacimiento'].errors?.['required']">La fecha de nacimiento es obligatoria.</small>
+      <small>La fecha de nacimiento es obligatoria.</small>
     </div>
 
-    <!-- Selector de rol -->
-    <div>
-      <label><input type="radio" formControlName="rol" value="paciente" /> Paciente</label>
-      <label><input type="radio" formControlName="rol" value="especialista" /> Especialista</label>
-    </div>
-
-    <!-- Obra Social (solo paciente) -->
-    <div *ngIf="rolSeleccionado === 'paciente'">
+    <!-- Obra social (solo pacientes) -->
+    <div *ngIf="form.get('rol')?.value === 'paciente'">
       <input type="text" placeholder="Obra Social" formControlName="obra_social" />
     </div>
 
-    <!-- Especialidades (solo especialista) -->
-    <div *ngIf="rolSeleccionado === 'especialista'" formArrayName="especialidades">
-      <div *ngFor="let esp of especialidades.controls; let i = index">
-        <input [formControlName]="i" placeholder="Especialidad {{ i + 1 }}" />
-      </div>
-      <button type="button" (click)="agregarEspecialidad()">+ Añadir especialidad</button>
+    <!-- Especialidades (solo especialistas) -->
+    <div *ngIf="form.get('rol')?.value === 'especialista'" class="especialidades-section">
+      <h4>Seleccioná una o más especialidades</h4>
 
-      <!-- Vista previa de especialidades con pipe -->
-      <div *ngIf="especialidades.length > 0">
-        <h4>Especialidades seleccionadas:</h4>
-        <ul>
-          <li *ngFor="let esp of especialidades.controls">
-            {{ esp.value | capitalizarPrimeraLetra }}
-          </li>
-        </ul>
+      <!-- ComboBox de especialidades -->
+      <select (change)="agregarEspecialidadDesdeCombo($event)">
+        <option value="" disabled selected>Seleccionar especialidad...</option>
+        <option *ngFor="let esp of especialidadesDisponibles" [value]="esp.nombre">
+          {{ esp.nombre | capitalizarPrimeraLetra }}
+        </option>
+      </select>
+
+      <!-- Campo para agregar nueva especialidad -->
+      <div class="nueva-especialidad">
+        <input type="text" placeholder="Nueva especialidad" formControlName="nuevaEspecialidad" />
+        <button type="button" (click)="agregarEspecialidadNueva()">Agregar nueva</button>
       </div>
+
+      <!-- Lista de especialidades seleccionadas -->
+      <ul formArrayName="especialidades">
+        <li *ngFor="let espCtrl of especialidades.controls; let i = index">
+          {{ espCtrl.value | capitalizarPrimeraLetra }}
+          <button type="button" (click)="especialidades.removeAt(i)">✖</button>
+        </li>
+      </ul>
     </div>
 
-    <!-- Subida de imágenes -->
+    <!-- Imágenes -->
     <div>
       <input type="file" (change)="onFileSelected($event)" />
-      <input *ngIf="rolSeleccionado === 'paciente'" type="file" (change)="onFileSelected($event, true)" />
+      <input *ngIf="form.get('rol')?.value === 'paciente'" type="file" (change)="onFileSelected($event, true)" />
     </div>
 
     <!-- CAPTCHA -->
     <div class="captcha-container">
-      <re-captcha 
-        (resolved)="onCaptchaResolved($event)" 
-        siteKey="6LdQY3YrAAAAACgsrdnhmj5b2DBPIypDyUVK15pE">
-      </re-captcha>
+      <re-captcha (resolved)="onCaptchaResolved($event)" siteKey="6LdQY3YrAAAAACgsrdnhmj5b2DBPIypDyUVK15pE"></re-captcha>
     </div>
 
     <!-- Botón submit -->
     <button type="submit" [disabled]="form.invalid || !captchaResuelto">Registrarse</button>
 
-    <!-- Mensaje de error general -->
+    <!-- Error general -->
     <div class="error" *ngIf="errorMsg">{{ errorMsg }}</div>
   </form>
 </div>

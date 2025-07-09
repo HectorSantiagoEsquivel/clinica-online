@@ -14,20 +14,19 @@ export class RoleGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Promise<boolean> {
     try {
-      const perfil = await this.authService.getUserProfile(); // <- Esto es lo correcto
+      const perfil = await this.authService.getUserProfile();
       const expectedRoles: string[] = route.data['roles'];
 
-    console.log('=== DEBUG ROLEGUARD ===');
-    console.log('Perfil completo:', perfil); // Verifica toda la estructura
-    console.log('Rol del usuario:', perfil?.rol, '(Tipo:', typeof perfil?.rol, ')');
-    console.log('Roles esperados:', expectedRoles, '(Tipo:', typeof expectedRoles[0], ')');
-    console.log('Ruta intentada:', route.routeConfig?.path);
+      // extrae el role y protégelo contra null
+      const userRole = perfil?.rol ?? ''; // si es null, cae a string vacío
 
-      if (perfil && expectedRoles.includes(perfil.rol)) {
+      console.log('Rol del usuario:', userRole, '(Tipo:', typeof userRole, ')');
+      console.log('Roles esperados:', expectedRoles);
+
+      if (expectedRoles.includes(userRole)) {
         return true;
       }
 
-      // Redirigir si no tiene el rol correcto
       this.router.navigate(['/home']);
       return false;
 

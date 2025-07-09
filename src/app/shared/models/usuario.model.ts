@@ -1,4 +1,4 @@
-export type Rol = 'paciente' | 'especialista' | 'admin';
+export type Rol = 'paciente' | 'especialista' | 'admin' | null;
 export type EstadoEspecialista = 'pendiente'|'aprobado'|'desabilitado';
 
 export interface Usuario

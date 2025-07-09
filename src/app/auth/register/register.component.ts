@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +9,7 @@ import { RecaptchaModule } from 'ng-recaptcha';
 import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 import { CapitalizarPrimeraLetraPipe } from '../../shared/pipes/capitalizarPrimeraLetra';
 import { CapitalizarInputDirective } from '../../shared/directives/capitalizar-input.directive';
+import { EspecialidadService } from '../../shared/services/especialidad.service';
 
 @Component({
   selector: 'app-register',
@@ -20,29 +21,40 @@ import { CapitalizarInputDirective } from '../../shared/directives/capitalizar-i
     CommonModule,
     RecaptchaModule,
     SpinnerDirective,
-    CapitalizarInputDirective // ✅ Acá estaba faltando
+    CapitalizarInputDirective
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
   form!: FormGroup;
+  rolSeleccionado: 'paciente' | 'especialista' |null = null;
   imagenPerfilFile?: File;
   imagenSecundariaFile?: File;
   cargando = false;
   errorMsg = '';
   submitted = false;
 
-  captchaResuelto: boolean = false;
+  captchaResuelto = false;
   captchaToken: string | null = null;
+
+  especialidadesDisponibles: { id: string; nombre: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private especialidadService: EspecialidadService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.crearFormulario();
+    this.configurarCambioRol();
+    await this.cargarEspecialidades();
+    this.inicializarRol();
+  }
+
+  private crearFormulario(): void {
     this.form = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
       apellido: ['', [Validators.required, Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
@@ -51,109 +63,154 @@ export class RegisterComponent implements OnInit {
       confirmarPassword: ['', Validators.required],
       dni: ['', Validators.required],
       fecha_nacimiento: ['', Validators.required],
-      rol: ['paciente', Validators.required],
-      obra_social: [''],  // solo paciente
-      especialidades: this.fb.array([]),  // solo especialista
-    }, {
-      validators: this.passwordsIguales
-    });
-
-    this.form.get('rol')?.valueChanges.subscribe(rol => {
-      if (rol === 'paciente') {
-        this.form.get('obra_social')?.enable();
-        this.form.setControl('especialidades', this.fb.array([]));
-      } else if (rol === 'especialista') {
-        this.form.get('obra_social')?.disable();
-        if (!this.form.get('especialidades')) {
-          this.form.setControl('especialidades', this.fb.array([]));
-        }
-        this.agregarEspecialidad();
-      }
-    });
-
-    this.form.get('rol')?.updateValueAndValidity();
+      rol: [null, Validators.required],
+      obra_social: [''],
+      especialidades: this.fb.array([]),
+      nuevaEspecialidad: ['']
+    }, { validators: this.passwordsIguales });
   }
 
-  passwordsIguales(formGroup: FormGroup) {
+  private passwordsIguales(formGroup: FormGroup): ValidationErrors | null {
     const pass = formGroup.get('password')?.value;
     const confirm = formGroup.get('confirmarPassword')?.value;
     return pass === confirm ? null : { passwordsNoCoinciden: true };
   }
 
-  onFileSelected(event: Event, esSecundaria: boolean = false) {
-    const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-      if (esSecundaria) {
-        this.imagenSecundariaFile = target.files[0];
+  private configurarCambioRol(): void {
+    this.form.get('rol')?.valueChanges.subscribe(role => {
+      this.rolSeleccionado = role;
+      if (role === 'paciente') {
+        this.form.get('obra_social')?.enable();
+        this.resetEspecialidades();
       } else {
-        this.imagenPerfilFile = target.files[0];
+        this.form.get('obra_social')?.disable();
+        this.resetEspecialidades();
       }
+    });
+  }
+
+  private inicializarRol(): void {
+    const role: 'paciente' | 'especialista' = this.form.get('rol')?.value;
+    this.rolSeleccionado = role;
+    if (role === 'paciente') {
+      this.form.get('obra_social')?.enable();
+    } else {
+      this.form.get('obra_social')?.disable();
     }
   }
 
-  onCaptchaResolved(token: string | null) {
-    this.captchaToken = token;
-    this.captchaResuelto = !!token;
-    console.log('Captcha resuelto:', token);
+  private resetEspecialidades(): void {
+    this.form.setControl('especialidades', this.fb.array([]));
   }
 
-  async registrar() {
-    this.cargando = true;
-    this.submitted = true;
-    this.errorMsg = '';
-
-    const rol = this.form.value.rol;
-    const esPaciente = rol === 'paciente';
-
-    if (this.form.invalid || !this.imagenPerfilFile || (esPaciente && !this.imagenSecundariaFile) || !this.captchaResuelto) {
-      this.errorMsg = 'Completa todos los campos requeridos y resuelve el captcha.';
-      this.cargando = false;
-      return;
-    }
-
-    const especialidadesSeleccionadas = this.especialidades.controls
-      .map(c => c.value)
-      .filter((v: string) => v && v.trim().length > 0);
-
-    const usuario: Usuario = {
-      id: '',
-      email: this.form.value.email,
-      nombre: this.form.value.nombre,
-      apellido: this.form.value.apellido,
-      dni: this.form.value.dni,
-      rol,
-      verificado: esPaciente,
-      fecha_nacimiento: this.form.value.fecha_nacimiento,
-      obra_social: esPaciente ? this.form.value.obra_social || null : null
-    };
-
+  private async cargarEspecialidades(): Promise<void> {
     try {
-      await this.authService.registrarse(
+      this.especialidadesDisponibles = await this.especialidadService.getEspecialidades();
+    } catch (e) {
+      console.error('Error al cargar especialidades', e);
+    }
+  }
+
+  private validarAntesDeEnviar(): boolean {
+    const esPaciente = this.rolSeleccionado === 'paciente';
+    this.submitted = true;
+    if (
+      this.form.invalid ||
+      !this.imagenPerfilFile ||
+      (esPaciente && !this.imagenSecundariaFile) ||
+      !this.captchaResuelto
+    ) {
+      this.errorMsg = 'Completa todos los campos requeridos y resuelve el captcha.';
+      return true;
+    }
+    return false;
+  }
+
+  private extraerEspecialidades(): string[] {
+    return (this.form.get('especialidades') as FormArray).controls
+      .map(c => c.value)
+      .filter((v: string) => v?.trim().length > 0);
+  }
+
+  private armarUsuario(): Usuario {
+    const { nombre, apellido, email, dni, fecha_nacimiento, obra_social } = this.form.value;
+    return {
+      id: '',
+      nombre,
+      apellido,
+      email,
+      dni,
+      rol: this.rolSeleccionado,
+      verificado: this.rolSeleccionado === 'paciente',
+      fecha_nacimiento,
+      obra_social: this.rolSeleccionado === 'paciente' ? obra_social || null : null
+    };
+  }
+
+  private async enviarRegistro(usuario: Usuario, especialidades: string[]): Promise<void> {
+    try {
+      const { user } = await this.authService.registrarse(
         usuario,
         this.form.value.password,
         this.imagenPerfilFile!,
         this.imagenSecundariaFile,
-        especialidadesSeleccionadas
+        especialidades
       );
       alert('Registro exitoso!');
       this.router.navigate(['/login']);
-    } catch (error: any) {
-      this.errorMsg = error.message || 'Error al registrarse.';
+    } catch (e: any) {
+      this.errorMsg = e.message || 'Error al registrarse.';
     } finally {
       this.cargando = false;
     }
   }
 
-  get especialidades() {
+  async registrar(): Promise<void> {
+    this.cargando = true;
+    if (this.validarAntesDeEnviar()) {
+      this.cargando = false;
+      return;
+    }
+    const especialidades = this.extraerEspecialidades();
+    const usuario = this.armarUsuario();
+    await this.enviarRegistro(usuario, especialidades);
+  }
+
+  onFileSelected(event: Event, esSecundaria = false): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    esSecundaria ? (this.imagenSecundariaFile = file) : (this.imagenPerfilFile = file);
+  }
+
+  onCaptchaResolved(token: string | null): void {
+    this.captchaToken = token;
+    this.captchaResuelto = !!token;
+  }
+
+  agregarEspecialidadDesdeCombo(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const valor = select.value;
+    const formArray = this.form.get('especialidades') as FormArray;
+    if (valor && !formArray.controls.some(c => c.value === valor)) {
+      formArray.push(this.fb.control(valor, Validators.required));
+    }
+    select.selectedIndex = 0;
+  }
+
+  agregarEspecialidadNueva(): void {
+    const control = this.form.get('nuevaEspecialidad');
+    const nombre = control?.value?.trim();
+    if (!nombre) return;
+    const formArray = this.form.get('especialidades') as FormArray;
+    if (!formArray.controls.some(c => c.value?.toLowerCase() === nombre.toLowerCase())) {
+      formArray.push(this.fb.control(nombre, Validators.required));
+    }
+    control?.reset();
+  }
+
+  get especialidades(): FormArray {
     return this.form.get('especialidades') as FormArray;
-  }
-
-  agregarEspecialidad() {
-    this.especialidades.push(this.fb.control('', Validators.required));
-  }
-
-  get rolSeleccionado(): string {
-    return this.form.get('rol')?.value;
   }
 
   get f() {
