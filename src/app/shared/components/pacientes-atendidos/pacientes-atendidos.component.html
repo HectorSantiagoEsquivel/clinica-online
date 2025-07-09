@@ -1,4 +1,4 @@
-<div *ngIf="cargando" class="cargando"[appSpinner]="cargando">Cargando pacientes atendidos...</div>
+<div *ngIf="cargando" class="cargando" [appSpinner]="cargando">Cargando pacientes atendidos...</div>
 
 <div *ngIf="!cargando && pacientes.length === 0" class="vacio">
   No has atendido a ningún paciente aún.
@@ -8,6 +8,9 @@
   <h2>Pacientes atendidos</h2>
   <ul class="paciente-lista">
     <li *ngFor="let paciente of pacientes" class="paciente-item">
+      <div class="avatar">
+        <img [src]="paciente.imagen_perfil || 'assets/usuarios/default.png'" alt="img paciente" />
+      </div>
       <div class="info">
         <div class="nombre">{{ paciente.nombre }} {{ paciente.apellido }}</div>
         <div class="email">{{ paciente.email }}</div>
