@@ -14,8 +14,10 @@ export class EspecialidadService {
       .from('especialidades')
       .select('*');
     if (error) throw error;
-    return data;
+
+    return Promise.all(data.map(esp => this.cargarImagenEspecialidad(esp)));
   }
+
 
 
   async crearEspecialidad(nombre: string, creada_por: string): Promise<any> {
@@ -28,20 +30,35 @@ export class EspecialidadService {
     return data; 
   }
 
-    obtenerEspecialidadesPorEspecialista(especialistaId: string): Observable<any[]> {
-    // Supabase permite hacer selects con joins usando la sintaxis de objetos anidados
+  obtenerEspecialidadesPorEspecialista(especialistaId: string): Observable<any[]> {
     const query = this.supabase.client
       .from('especialista_especialidades')
       .select('especialidad:especialidad_id (id, nombre)')
       .eq('especialista_id', especialistaId);
 
-    const promesa = query.then(({ data, error }) => {
+    const promesa = query.then(async ({ data, error }) => {
       if (error) throw error;
-      // Extraemos solo la parte de especialidad (el array puede contener objetos con clave 'especialidad')
-      return data?.map(item => item.especialidad) || [];
+      const especialidades = data?.map(item => item.especialidad) || [];
+      const especialidadesConImagen = await Promise.all(
+        especialidades.map(esp => this.cargarImagenEspecialidad(esp))
+      );
+
+      return especialidadesConImagen;
     });
 
     return from(promesa);
+  }
+
+  async cargarImagenEspecialidad(especialidad: any): Promise<any> {
+    const carpeta = `especialidades/${especialidad.id}-${especialidad.nombre}`;
+    const { data: imagen } = this.supabase.client.storage
+      .from('imagenes')
+      .getPublicUrl(`${carpeta}/imagen.png`);
+
+    return {
+      ...especialidad,
+      imagen_url: imagen.publicUrl || 'assets/especialidades/default.png'
+    };
   }
 
   async obtenerEspecialidadPorId(id: string): Promise<{ id: string, nombre: string }> 

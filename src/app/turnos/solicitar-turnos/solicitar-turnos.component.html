@@ -1,66 +1,59 @@
-<div class="solicitar-turno-container">
-
+<div class="solicitar-turno-container" [appSpinner]="cargando">
   <h2>Solicitar turno</h2>
 
-  <!-- ESPECIALIDADES -->
-  <label>Especialidad:</label>
-  <div class="botonera">
-    <button
-      *ngFor="let esp of especialidades"
-      (click)="
-        especialidadSeleccionadaNombre = esp.nombre;
-        especialidadSeleccionadaId = esp.id;
-        onEspecialidadChange()
-      "
-      [class.activo]="especialidadSeleccionadaNombre === esp.nombre"
+  <!-- PROFESIONALES -->
+  <label>Profesional:</label>
+  <div class="grid-profesionales">
+    <div
+      class="card-profesional"
+      *ngFor="let esp of especialistas"
+      [class.activo]="especialistaSeleccionado?.id === esp.id"
+      (click)="especialistaSeleccionado = esp; onEspecialistaChange()"
     >
-      {{ esp.nombre }}
-    </button>
+      <img [src]="esp.imagen_perfil || 'assets/usuarios/default.png'" alt="img" />
+      <span>{{ esp.nombre }} {{ esp.apellido }}</span>
+    </div>
   </div>
 
-  <!-- ESPECIALISTAS -->
-  <div *ngIf="especialistas.length > 0">
-    <label>Especialista:</label>
-    <div class="botonera">
-      <button
-        *ngFor="let esp of especialistas"
-        (click)="especialistaSeleccionado = esp; onEspecialistaChange()"
-        [class.activo]="especialistaSeleccionado?.id === esp.id"
+  <!-- ESPECIALIDADES -->
+  <div *ngIf="especialistaSeleccionado && especialidades.length > 0">
+    <label>Especialidad:</label>
+    <div class="grid-especialidades">
+      <div
+        class="card-especialidad"
+        *ngFor="let esp of especialidades"
+        [class.activo]="especialidadSeleccionadaId === esp.id"
+        (click)="
+          especialidadSeleccionadaNombre = esp.nombre;
+          especialidadSeleccionadaId = esp.id;
+          onEspecialidadChange()
+        "
       >
-        {{ esp.nombre }} {{ esp.apellido }}
+        <p>{{ esp.nombre }}</p>
+        <img [src]="esp.imagen_url || 'assets/especialidades/default.png'" alt="img" />
+      </div>
+    </div>
+  </div>
+
+  <!-- DÍAS -->
+  <div *ngIf="especialidadSeleccionadaId && diasProximos.length > 0">
+    <label>Día:</label>
+    <div class="grid-fechas">
+      <button
+        *ngFor="let dia of diasProximos"
+        (click)="onDiaSeleccionado(dia)"
+        [class.activo]="diaSeleccionado === dia"
+      >
+        {{ dia }}<br />
+        {{ obtenerNombreDia(dia) }}
       </button>
     </div>
   </div>
 
-  <!-- PACIENTES (solo para admin) -->
-    <div *ngIf="esAdmin && especialistas.length > 0" class="input-container"> <!-- Cambio de clase -->
-    <label>Paciente:</label>
-    <select [(ngModel)]="pacienteSeleccionado">
-        <option [ngValue]="undefined" disabled selected>Seleccione un paciente</option>
-        <option *ngFor="let p of pacientes" [ngValue]="p">
-        {{ p.nombre }} {{ p.apellido }}
-        </option>
-    </select>
-    </div>
-  <!-- DIAS -->
-
-<div *ngIf="especialistaSeleccionado && diasProximos.length > 0">
-  <label>Día:</label>
-  <div class="botonera">
-    <button
-      *ngFor="let dia of diasProximos"
-      (click)="onDiaSeleccionado(dia)"
-      [class.activo]="diaSeleccionado === dia"
-    >
-      {{ obtenerNombreDia(dia) }} — {{ dia }}
-    </button>
-  </div>
-</div>
-
   <!-- HORARIOS -->
   <div *ngIf="diaSeleccionado && horariosDisponibles.length > 0">
-    <label>Horario disponible:</label>
-    <div class="botonera">
+    <label>Horario:</label>
+    <div class="grid-horarios">
       <button
         *ngFor="let hora of horariosDisponibles"
         (click)="horaSeleccionada = hora"
@@ -71,9 +64,19 @@
     </div>
   </div>
 
+  <!-- PACIENTE (sólo si es admin) -->
+  <div *ngIf="esAdmin" class="input-container">
+    <label>Paciente:</label>
+    <select [(ngModel)]="pacienteSeleccionado">
+      <option [ngValue]="undefined" disabled selected>Seleccione un paciente</option>
+      <option *ngFor="let p of pacientes" [ngValue]="p">
+        {{ p.nombre }} {{ p.apellido }}
+      </option>
+    </select>
+  </div>
+
   <!-- RESERVAR -->
   <div class="reservar-turno" *ngIf="horaSeleccionada">
     <button (click)="reservarTurno()">Reservar turno</button>
   </div>
-
 </div>

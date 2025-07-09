@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { EspecialidadService } from '../../shared/services/especialidad.service';
@@ -45,21 +46,20 @@ export class SolicitarTurnoComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.cargando=true;
-    // 1) traigo especialidades
-    this.especialidades = await this.especialidadService.getEspecialidades();
-
-    // 2) genero próximos 15 días en local
+    this.cargando = true;
+    this.especialidades = [];
+    this.especialistas = await this.authService.traerUsuariosPorPerfil('especialista');
     this.generarProximosDias();
-
-    // 3) determino si es admin y cargo pacientes
     const user = await this.authService.getUserProfile();
     this.esAdmin = user.rol === 'admin';
+
     if (this.esAdmin) {
       this.pacientes = await this.authService.traerUsuariosPorPerfil('paciente');
     }
-    this.cargando=false;
+
+    this.cargando = false;
   }
+
 
   /** Genera 15 fechas YYYY-MM-DD en hora local */
   generarProximosDias() {
@@ -77,14 +77,14 @@ export class SolicitarTurnoComponent implements OnInit {
 
   /** Cuando elijo una especialidad */
   async onEspecialidadChange() {
-    this.especialistaSeleccionado = undefined;
     this.diaSeleccionado = '';
     this.horaSeleccionada = '';
     this.horariosDisponibles = [];
-    this.diasProximos = [];
 
-    // cargo todos los especialistas (luego podés filtrar por especialidad)
-    this.especialistas = await this.authService.traerUsuariosPorPerfil('especialista');
+    // si ya hay especialista, regeneramos días
+    if (this.especialistaSeleccionado) {
+      await this.generarDiasConTurnosDisponibles();
+    }
   }
 
   /** Cuando elijo un especialista */
@@ -92,6 +92,10 @@ export class SolicitarTurnoComponent implements OnInit {
     this.diaSeleccionado = '';
     this.horaSeleccionada = '';
     this.horariosDisponibles = [];
+    // 🚀 traer especialidades del especialista
+    this.especialidades = await firstValueFrom(
+      this.especialidadService.obtenerEspecialidadesPorEspecialista(this.especialistaSeleccionado!.id)
+    );
     await this.generarDiasConTurnosDisponibles();
   }
 

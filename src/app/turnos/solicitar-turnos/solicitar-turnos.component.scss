@@ -1,4 +1,3 @@
-
 $primary-color: #2c3e50;
 $secondary-color: #009688;
 $background-color: #f8f9fa;
@@ -6,69 +5,206 @@ $card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 $border-radius: 10px;
 $transition: all 0.3s ease;
 
-
 .solicitar-turno-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   max-width: 800px;
   margin: auto;
+  padding: 1rem;
 
   h2 {
     text-align: center;
-    color: $primary-color; // Añadido para consistencia
+    color: $primary-color;
   }
 
-  .botonera {
+  label {
+    font-weight: 600;
+    color: $primary-color;
+  }
+
+  /* ===== PROFESIONALES ===== */
+  .grid-profesionales {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 1rem;
+    margin-top: 0.5rem;
   }
 
-  button {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    background: $primary-color;
-    color: white;
-    border: none;
+  .card-profesional {
+    width: 120px;
+    height: 150px;
+    background: white;
+    border-radius: $border-radius;
+    border: 2px solid transparent;
+    box-shadow: $card-shadow;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    transition: $transition;
     cursor: pointer;
-    transition: background 0.3s;
 
-    &:hover {
-      background: lighten($primary-color, 10%);
+    img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-bottom: 0.5rem;
+    }
+
+    span {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: $primary-color;
     }
 
     &.activo {
-      background: $secondary-color;
-      color: white;
-      font-weight: bold;
+      border-color: $secondary-color;
+      background: lighten($secondary-color, 35%);
     }
   }
 
-  select {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    background: $primary-color;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
+  /* ===== ESPECIALIDADES ===== */
+  .grid-especialidades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
 
-    option {
+  .card-especialidad {
+    width: 160px;
+    height: 140px;
+    background: white;
+    border-radius: $border-radius;
+    border: 2px solid transparent;
+    box-shadow: $card-shadow;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    transition: $transition;
+    cursor: pointer;
+
+    p {
+      margin: 0;
+      font-weight: 600;
+      color: $primary-color;
+    }
+
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-top: 0.5rem;
+    }
+
+    &.activo {
+      border-color: $secondary-color;
+      background: lighten($secondary-color, 35%);
+    }
+  }
+
+  /* ===== FECHAS / DÍAS ===== */
+  .grid-fechas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+    button {
+      width: 110px;
+      height: 70px;
       background: $primary-color;
       color: white;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: $transition;
+      text-align: center;
+      font-size: 0.9rem;
+
+      &:hover {
+        background: lighten($primary-color, 10%);
+      }
+
+      &.activo {
+        background: $secondary-color;
+        font-weight: bold;
+      }
     }
   }
 
+  /* ===== HORARIOS ===== */
+  .grid-horarios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+    button {
+      width: 80px;
+      height: 40px;
+      background: $primary-color;
+      color: white;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: $transition;
+      font-size: 0.9rem;
+
+      &:hover {
+        background: lighten($primary-color, 10%);
+      }
+
+      &.activo {
+        background: $secondary-color;
+        font-weight: bold;
+      }
+    }
+  }
+
+  /* ===== SELECT PACIENTE ===== */
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+
+    select {
+      padding: 0.5rem 1rem;
+      border-radius: $border-radius;
+      background: $primary-color;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      margin-top: 0.3rem;
+
+      option {
+        background: $primary-color;
+        color: white;
+      }
+    }
+  }
+
+  /* ===== BOTÓN RESERVAR ===== */
   .reservar-turno {
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 
     button {
       background: $secondary-color;
       color: white;
       padding: 0.7rem 2rem;
       font-size: 1.2rem;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: $transition;
 
       &:hover {
         background: darken($secondary-color, 10%);
