@@ -37,6 +37,39 @@ export class LoginComponent {
   password: string = '';
   error: string | null = null;
   cargando: boolean = false;
+  usuariosRapidos = [
+    {
+      email: 'hectorsantiagoesquivel@gmail.com',
+      rol: 'Admin',
+      img: 'https://hcghaysrtiwxpmbmgeld.supabase.co/storage/v1/object/public/imagenes/usuarios/06b827e5-f25d-4c5c-9c5f-d50bfbafb320-Hector/imagen1.png'
+    },
+    {
+      email: 'overjoyed.viper3390@maildrop.cc',
+      rol: 'Especialista 1',
+      img: 'https://hcghaysrtiwxpmbmgeld.supabase.co/storage/v1/object/public/imagenes/usuarios/98201060-e1fd-43ec-8c23-b95d67492f0b-Luis/imagen1.png'
+    },
+    {
+      email: 'hellish.tiger3551@maildrop.cc',
+      rol: 'Especialista 2',
+      img: 'https://hcghaysrtiwxpmbmgeld.supabase.co/storage/v1/object/public/imagenes/usuarios/e503ece3-b5fb-42ed-a56d-970c4127feda-Romulo/imagen1.png'
+    },
+    {
+      email: 'jagged.shrew9020@maildrop.cc',
+      rol: 'Paciente 1',
+      img: 'https://hcghaysrtiwxpmbmgeld.supabase.co/storage/v1/object/public/imagenes/usuarios/18d10d7a-d081-4e88-a1d7-0eb958989eca-Dario/imagen1.png'
+    },
+    {
+      email: 'strange.sparrow9798@maildrop.cc',
+      rol: 'Paciente 2',
+      img: 'https://hcghaysrtiwxpmbmgeld.supabase.co/storage/v1/object/public/imagenes/usuarios/ffb47c9e-529f-4f71-932e-bf21d793e4bf-Homero/imagen1.png'
+    },
+    {
+      email: 'salty.marten4821@maildrop.cc',
+      rol: 'Paciente 3',
+      img: 'https://hcghaysrtiwxpmbmgeld.supabase.co/storage/v1/object/public/imagenes/usuarios/c0d98dad-bd65-4d86-a837-87c00fb5d54a-Gustavo/imagen1.png'
+    }
+  ];
+
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -52,20 +85,13 @@ export class LoginComponent {
     this.cargando = false;
   }
 
-  autocompletar(tipo: 'paciente' | 'especialista' | 'admin') {
-    switch (tipo) {
-      case 'paciente':
-        this.email = 'fresh.pelican9473@maildrop.cc';
-        break;
-      case 'especialista':
-        this.email = 'meaty.eel8794@maildrop.cc';
-        break;
-      case 'admin':
-        this.email = 'hectorsantiagoesquivel@gmail.com';
-        break;
-    }
+
+
+  autocompletar(user: { email: string }) {
+    this.email = user.email;
     this.password = 'contraseña';
   }
+
 
   private traducirError(mensaje: string): string {
     switch (mensaje) {

@@ -1,5 +1,5 @@
 .login-container {
-  max-width: 400px;
+  max-width: 420px;
   margin: 5rem auto;
   padding: 2rem;
   background-color: #ffffff;
@@ -13,21 +13,53 @@
   }
 }
 
+.usuarios-rapidos {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+
+  .usuario-btn {
+    flex: 1 1 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: #e0f2f1;
+    border: 1px solid #ccc;
+    border-radius: 0; // sin bordes redondeados
+    cursor: pointer;
+    transition: background-color 0.3s;
+    min-width: 100px;
+
+    img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 0; // imagen rectangular
+      margin-bottom: 0.3rem;
+    }
+
+    span {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      color: #333;
+    }
+
+    &:hover {
+      background-color: #b2dfdb;
+    }
+  }
+}
+
+
 .fade-item {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeIn 400ms ease-out forwards;
   margin-bottom: 1.2rem;
-
-  &:nth-child(1) { animation-delay: 0.2s; }
-  &:nth-child(2) { animation-delay: 0.4s; }
-  &:nth-child(3) { animation-delay: 0.6s; }
-  &:nth-child(4) { animation-delay: 0.8s; }
-  &:nth-child(5) { animation-delay: 1s; }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 
   input {
     width: 100%;
@@ -37,7 +69,7 @@
     font-size: 1rem;
   }
 
-  button {
+  button[type='submit'] {
     width: 100%;
     padding: 0.75rem;
     background-color: #009688;
@@ -56,26 +88,6 @@
     color: red;
     font-weight: bold;
     text-align: center;
-  }
-}
-
-.quick-buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-
-  button {
-    flex: 1;
-    padding: 0.5rem;
-    font-size: 0.9rem;
-    background-color: #009688;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #00796b;
-    }
   }
 }
 

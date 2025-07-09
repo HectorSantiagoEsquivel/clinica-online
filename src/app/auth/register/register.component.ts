@@ -10,6 +10,7 @@ import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 import { CapitalizarPrimeraLetraPipe } from '../../shared/pipes/capitalizarPrimeraLetra';
 import { CapitalizarInputDirective } from '../../shared/directives/capitalizar-input.directive';
 import { EspecialidadService } from '../../shared/services/especialidad.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -149,14 +150,21 @@ export class RegisterComponent implements OnInit {
 
   private async enviarRegistro(usuario: Usuario, especialidades: string[]): Promise<void> {
     try {
-      const { user } = await this.authService.registrarse(
+      await this.authService.registrarse(
         usuario,
         this.form.value.password,
         this.imagenPerfilFile!,
         this.imagenSecundariaFile,
         especialidades
       );
-      alert('Registro exitoso!');
+
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Registro exitoso!',
+        text: 'Por favor verifique su mail.',
+        confirmButtonText: 'Ir al login',
+      });
+
       this.router.navigate(['/login']);
     } catch (e: any) {
       this.errorMsg = e.message || 'Error al registrarse.';

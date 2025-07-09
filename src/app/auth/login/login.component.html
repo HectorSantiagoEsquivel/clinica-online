@@ -1,14 +1,20 @@
 <div class="login-container">
   <h2>Iniciar Sesión</h2>
-  <form (ngSubmit)="login()">
-    <div class="fade-item">
-      <div class="quick-buttons">
-        <button type="button" (click)="autocompletar('paciente')">Paciente</button>
-        <button type="button" (click)="autocompletar('especialista')">Especialista</button>
-        <button type="button" (click)="autocompletar('admin')">Admin</button>
-      </div>
-    </div>
 
+  <!-- BOTONES DE ACCESO RÁPIDO -->
+  <div class="usuarios-rapidos fade-item" @staggerFade>
+    <button
+      *ngFor="let user of usuariosRapidos"
+      class="usuario-btn"
+      (click)="autocompletar(user)"
+    >
+      <img [src]="user.img" alt="avatar" />
+      <span>{{ user.rol }}</span>
+    </button>
+  </div>
+
+  <!-- FORMULARIO LOGIN -->
+  <form (ngSubmit)="login()">
     <div class="fade-item">
       <label for="email">Email:</label>
       <input type="email" [(ngModel)]="email" name="email" required />
