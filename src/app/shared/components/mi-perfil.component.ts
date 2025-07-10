@@ -8,6 +8,9 @@ import { HistoriaClinicaPacienteComponent } from './historia-clinica-paciente/hi
 import { SpinnerDirective } from '../directives/spinner.directive';
 import { firstValueFrom } from 'rxjs';
 import { AlternarImagenDirective } from '../directives/alternar-imagen.directive';
+import { CapitalizarPrimeraLetraPipe } from '../pipes/capitalizarPrimeraLetra';
+import { EdadPipe } from '../pipes/edadPipe';
+import { FormatoDniPipe } from '../pipes/formatoDNI';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -17,7 +20,10 @@ import { AlternarImagenDirective } from '../directives/alternar-imagen.directive
     SpinnerDirective,
     MisHorariosEspecialistaComponent,
     HistoriaClinicaPacienteComponent,
-    AlternarImagenDirective
+    AlternarImagenDirective,
+    CapitalizarPrimeraLetraPipe,
+    EdadPipe,
+    FormatoDniPipe
   ],
   templateUrl: './mi-perfil.component.html',
   styleUrls: ['./mi-perfil.component.scss'],
@@ -54,15 +60,4 @@ export class MiPerfilComponent implements OnInit {
     }
   }
 
-  calcularEdad(fechaNacimiento?: Date): number | string {
-    if (!fechaNacimiento) return 'N/D';
-    const hoy = new Date();
-    const nac = new Date(fechaNacimiento);
-    let edad = hoy.getFullYear() - nac.getFullYear();
-    const m = hoy.getMonth() - nac.getMonth();
-    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) {
-      edad--;
-    }
-    return edad;
-  }
 }

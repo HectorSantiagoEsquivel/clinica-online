@@ -12,7 +12,6 @@
     <div class="perfil-card" *ngIf="usuario">
       <div class="imagenes">
         <img
-          
           class="img-perfil"
           [appAlternarImagen]="[usuario.imagen_perfil, usuario.imagen_extra]"
           alt="Imagen de perfil"
@@ -22,18 +21,17 @@
       <div class="datos">
         <p><strong>Nombre:</strong> {{ usuario.nombre }} {{ usuario.apellido }}</p>
         <p><strong>Email:</strong> {{ usuario.email }}</p>
-        <p><strong>DNI:</strong> {{ usuario.dni }}</p>
-        <p><strong>Edad:</strong> {{ calcularEdad(usuario.fecha_nacimiento) }}</p>
-        <p><strong>Rol:</strong> {{ usuario.rol }}</p>
+        <p><strong>DNI:</strong> {{ usuario.dni | formatoDni}}</p>
+        <p><strong>Edad:</strong> {{ usuario.fecha_nacimiento! | edad }}</p>
+        <p><strong>Rol:</strong> {{ usuario.rol | capitalizarPrimeraLetra }}</p>
 
         <p *ngIf="usuario.rol === 'paciente' && usuario.obra_social">
-          <strong>Obra social:</strong> {{ usuario.obra_social }}
-        </p>
+          <strong>Obra social:</strong> {{ usuario.obra_social }}</p>
 
         <div *ngIf="usuario.rol === 'especialista' && especialidades.length">
           <p><strong>Especialidades:</strong></p>
           <ul>
-            <li *ngFor="let esp of especialidades">{{ esp.nombre }}</li>
+            <li *ngFor="let esp of especialidades">{{ esp.nombre | capitalizarPrimeraLetra }}</li>
           </ul>
         </div>
       </div>
