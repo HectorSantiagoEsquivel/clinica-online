@@ -143,7 +143,7 @@ export class AdminReportesComponent implements OnInit {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
-    doc.text('REPORTE DE GRÁFICOS', pageWidth / 2, 20, { align: 'center' });
+    doc.text('REPORTE ESTADISTICO', pageWidth / 2, 20, { align: 'center' });
     doc.setFontSize(12);
     doc.text(`Fecha: ${new Date().toLocaleDateString()}`, pageWidth / 2, 35, { align: 'center' });
 
@@ -190,7 +190,6 @@ export class AdminReportesComponent implements OnInit {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(100);
-      doc.text('Documento generado automáticamente - Clínica Online', pageWidth / 2, 285, { align: 'center' });
       doc.text(`Página ${i} de ${pageCount}`, pageWidth - 20, 285, { align: 'right' });
     }
   }

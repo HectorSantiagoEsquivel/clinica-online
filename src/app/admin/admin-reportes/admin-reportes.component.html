@@ -1,43 +1,52 @@
 <div class="admin-reportes p-4" [appSpinner]="cargando">
   <h1 class="text-2xl font-bold mb-4 text-center">Dashboard de Reportes</h1>
 
+
+
+  <!-- GRÁFICOS -->
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
     <section #graficoIngresos class="chart-container">
-      <h2 class="text-lg font-semibold mb-2 text-center">Log de Ingresos</h2>
+      <h2>Log de Ingresos</h2>
       <canvas baseChart [data]="ingresosData" [options]="ingresosOptions" chartType="line"></canvas>
     </section>
 
     <section #graficoEspecialidad class="chart-container">
-      <h2 class="text-lg font-semibold mb-2 text-center">Turnos por Especialidad</h2>
+      <h2>Turnos por Especialidad</h2>
       <canvas baseChart [data]="porEspecialidadData" [options]="porEspecialidadOptions" chartType="bar"></canvas>
     </section>
 
     <section #graficoDia class="chart-container">
-      <h2 class="text-lg font-semibold mb-2 text-center">Turnos por Día</h2>
+      <h2>Turnos por Día</h2>
       <canvas baseChart [data]="porDiaData" [options]="porDiaOptions" chartType="bar"></canvas>
     </section>
-
-    <section class="col-span-1 md:col-span-2 xl:col-span-3 flex flex-wrap gap-4 items-end justify-center">
+    <!-- FILTROS -->
+    <div class="filtros grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 items-end">
       <div>
-        <label class="block text-sm">Desde</label>
+        <label class="block text-sm mb-1">Desde</label>
         <input type="date" [(ngModel)]="desde" class="input-control" />
       </div>
       <div>
-        <label class="block text-sm">Hasta</label>
+        <label class="block text-sm mb-1">Hasta</label>
         <input type="date" [(ngModel)]="hasta" class="input-control" />
       </div>
-      <button (click)="filtrarPorMedico()" class="btn-primary">Filtrar</button>
-      <button (click)="descargarGraficosComoPDF()" class="btn-secondary">Descargar PDF</button>
-    </section>
+      <button (click)="filtrarPorMedico()" class="btn-primary col-span-1 md:col-span-1">Filtrar</button>
+    </div>
 
     <section #graficoSolicitados class="chart-container">
-      <h3 class="text-md font-medium mb-2 text-center">Solicitados por Médico</h3>
+      <h3>Solicitados por Médico</h3>
       <canvas baseChart [data]="solicitadosPorMedicoData" [options]="medicoOptions" chartType="bar"></canvas>
     </section>
 
     <section #graficoFinalizados class="chart-container">
-      <h3 class="text-md font-medium mb-2 text-center">Finalizados por Médico</h3>
+      <h3>Finalizados por Médico</h3>
       <canvas baseChart [data]="finalizadosPorMedicoData" [options]="medicoOptions" chartType="bar"></canvas>
     </section>
+  </div>
+
+  <!-- FOOTER DE DESCARGA -->
+  <div class="download-footer mt-6 text-center">
+    <button (click)="descargarGraficosComoPDF()" class="btn-download">
+      📥 Descargar Reporte en PDF
+    </button>
   </div>
 </div>
