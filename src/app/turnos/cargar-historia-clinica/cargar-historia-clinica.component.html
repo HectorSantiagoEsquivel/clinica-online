@@ -44,18 +44,21 @@
 
     <h3 class="subtitulo">Controles especiales</h3>
 
-    <div class="campo">
-      <label>Índice de salud (0–100): {{ historiaClinicaForm.value.adicionalSlider }}</label>
+    <div class="campo campo-especial">
+      <label>Etiqueta para slider (0–100):</label>
+      <input type="text" formControlName="claveSlider" placeholder="Ej: Índice de salud" />
       <input type="range" formControlName="adicionalSlider" min="0" max="100" />
     </div>
 
-    <div class="campo">
-      <label>Nivel de glucosa:</label>
+    <div class="campo campo-especial">
+      <label>Etiqueta para valor numérico:</label>
+      <input type="text" formControlName="claveNumerico" placeholder="Ej: Nivel de glucosa" />
       <input type="number" formControlName="adicionalNumerico" />
     </div>
 
-    <div class="campo switch-campo">
-      <label>¿Fumador?</label>
+    <div class="campo switch-campo campo-especial">
+      <label>Etiqueta para switch:</label>
+      <input type="text" formControlName="claveSwitch" placeholder="Ej: Fumador" />
       <label class="switch">
         <input type="checkbox" formControlName="adicionalSwitch" />
         <span class="slider"></span>

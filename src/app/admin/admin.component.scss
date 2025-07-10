@@ -33,37 +33,38 @@ h2, h3 {
   }
 }
 
-.tabs {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-  gap: 1rem;
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: #f2f2f2;
+    padding: 0.5rem;
+    border-radius: 999px;
 
-  button {
-    background-color: white;
-    border: 2px solid transparent;
-    font-weight: bold;
-    color: $primary-color;
-    padding: 0.6rem 1.2rem;
-    border-radius: $border-radius;
-    cursor: pointer;
-    transition: $transition;
-    box-shadow: $card-shadow;
+    button {
+      padding: 0.6rem 1.4rem;
+      border: none;
+      background: transparent;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
 
-    &.active {
-      border-color: $secondary-color;
-      background-color: $secondary-color;
-      color: white;
-      box-shadow: 0 2px 8px rgba($secondary-color, 0.4);
-    }
+      &.active {
+        background-color: #009688;
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
 
-    &:hover {
-      color: $secondary-color;
-      border-color: lighten($secondary-color, 20%);
-      background-color: lighten($secondary-color, 38%);
+      &:hover:not(.active) {
+        background-color: lighten(#009688, 20%);
+        color: white;
+      }
     }
   }
-}
+
 
 .table-wrapper {
   overflow-x: auto;

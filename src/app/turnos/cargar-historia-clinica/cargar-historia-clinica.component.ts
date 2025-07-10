@@ -42,6 +42,9 @@ export class CargarHistoriaClinicaComponent implements OnInit {
       campoDinamicoValor2: new FormControl(''),
       campoDinamicoClave3: new FormControl(''),
       campoDinamicoValor3: new FormControl(''),
+      claveSlider: new FormControl(''),
+      claveNumerico: new FormControl(''),
+      claveSwitch: new FormControl(''),
       adicionalSlider: new FormControl(50),
       adicionalNumerico: new FormControl(null),
       adicionalSwitch: new FormControl(false),
@@ -82,9 +85,19 @@ export class CargarHistoriaClinicaComponent implements OnInit {
       }
     }
 
-    datosAdicionales['Índice de salud'] = form.adicionalSlider;
-    datosAdicionales['Nivel de glucosa'] = form.adicionalNumerico;
-    datosAdicionales['Fumador'] = form.adicionalSwitch ? 'Sí' : 'No';
+    const keySlide = form.claveSlider?.trim();
+    const keyNum   = form.claveNumerico?.trim();
+    const keySw    = form.claveSwitch?.trim();
+
+    if (keySlide) {
+      datosAdicionales[keySlide] = form.adicionalSlider;
+    }
+    if (keyNum) {
+      datosAdicionales[keyNum] = form.adicionalNumerico;
+    }
+    if (keySw) {
+      datosAdicionales[keySw] = form.adicionalSwitch ? 'Sí' : 'No';
+    }
 
     const historia = {
       paciente_id: this.pacienteId,

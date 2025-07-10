@@ -29,6 +29,7 @@
 .campo {
   display: flex;
   flex-direction: column;
+  
 
   label {
     margin-bottom: 0.3rem;
@@ -36,12 +37,18 @@
     color: #444;
   }
 
-  input,
+  input[type='text'],
+  input[type='number'],
   textarea {
     padding: 0.6rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 1rem;
+  }
+
+  input[type='range'] {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 
   textarea {
@@ -63,27 +70,26 @@
     flex: 1;
   }
 }
+.campo input + input {
+  margin-top: 0.8rem;
+}
 
-/* Nuevos estilos para campos especiales */
 .campos-especiales {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 1.5rem;
+  margin-top: 2rem;
 }
 
 .slider-wrapper {
   display: flex;
   flex-direction: column;
-
-  input[type='range'] {
-    width: 100%;
-  }
+  gap: 0.4rem;
 
   .valor-slider {
-    margin-top: 0.3rem;
     text-align: right;
     color: #666;
+    margin-top: 2rem;
     font-size: 0.9rem;
   }
 }
@@ -93,8 +99,10 @@
   align-items: center;
   gap: 1rem;
 
-  label {
-    margin: 0;
+  .switch-label {
+    font-size: 1rem;
+    color: #333;
+    
   }
 }
 
@@ -102,6 +110,7 @@
 .switch {
   position: relative;
   display: inline-block;
+  margin-top: 2rem;
   width: 50px;
   height: 28px;
 
@@ -152,7 +161,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: #1b5e20;
   }
 
