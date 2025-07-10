@@ -19,14 +19,19 @@ import { CargarHistoriaClinicaComponent } from './turnos/cargar-historia-clinica
 import { PacientesAtendidosComponent } from './shared/components/pacientes-atendidos/pacientes-atendidos.component';
 import { HistoriaClinicaPacienteComponent } from './shared/components/historia-clinica-paciente/historia-clinica-paciente.component';
 import { AdminReportesComponent } from './admin/admin-reportes/admin-reportes.component';
+import { LandingComponent } from './shared/components/landing/landing.component';
 
 export const routes: Routes = [
 
   {
     path: '',
-    component: LoginComponent,
-    canActivate: [noAuthGuard],
-    data: { animation: 'login' }
+    component: LandingComponent,
+    data: { animation: 'home' }
+  },
+  {
+    path: 'home',
+    component: LandingComponent,
+    data: { animation: 'home' }
   },
   {
     path: 'login',
@@ -47,7 +52,7 @@ export const routes: Routes = [
     data: { animation: 'esperando-verificacion' } 
   },
   {
-    path: 'home',
+    path: 'mi-perfil',
     component: MiPerfilComponent,
     canActivate: [authGuard, VerificadoGuard],
     data: { animation: 'mi-perfil' } 

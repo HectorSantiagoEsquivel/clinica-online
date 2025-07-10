@@ -32,7 +32,7 @@ export class RoleGuard implements CanActivate {
 
     } catch (error) {
       console.error('Error en RoleGuard:', error);
-      this.router.navigate(['/login']);
+      this.router.navigate(['/home']);
       return false;
     }
   }

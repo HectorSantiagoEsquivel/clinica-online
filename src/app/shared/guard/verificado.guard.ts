@@ -35,12 +35,12 @@ export class VerificadoGuard implements CanActivate {
 
       if (rol === 'admin') return true;
 
-      this.router.navigate(['/login']);
+      this.router.navigate(['/home']);
       return false;
 
     } catch (error) {
       console.error('Error en VerificadoGuard:', error);
-      this.router.navigate(['/login']);
+      this.router.navigate(['/home']);
       return false;
     }
   }

@@ -30,7 +30,7 @@
     <!-- Si está logueado -->
 
     <ng-container *ngIf="!cargando && usuario">
-      <button class="nav-button" routerLink="/home">
+      <button class="nav-button" routerLink="/mi-perfil">
         <i class="icon-user"></i>
         Mi Perfil
       </button>
@@ -64,10 +64,6 @@
         <button class="nav-button" routerLink="/pacientes-atendidos">
           <i class="icon-heart"></i>
           Pacientes Atendidos
-        </button>
-        <button class="nav-button" routerLink="/solicitar-turnos">
-          <i class="icon-plus-circle"></i>
-          Solicitar Turnos
         </button>
       </ng-container>
 

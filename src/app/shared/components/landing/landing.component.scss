@@ -1,0 +1,43 @@
+.landing {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #f9f9f9;
+  min-height: 80vh;
+
+  .logo {
+    max-width: 180px;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .acciones {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+
+    .btn {
+      background-color: #009688;
+      color: white;
+      padding: 0.8rem 1.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken(#009688, 10%);
+      }
+    }
+  }
+}
