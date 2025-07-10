@@ -15,14 +15,14 @@ import { SpinnerDirective } from '../../shared/directives/spinner.directive';
   templateUrl: './cargar-historia-clinica.component.html',
   styleUrls: ['./cargar-historia-clinica.component.scss'],
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule,SpinnerDirective]
+  imports: [FormsModule, CommonModule, ReactiveFormsModule, SpinnerDirective]
 })
 export class CargarHistoriaClinicaComponent implements OnInit {
   historiaClinicaForm: FormGroup;
   turnoId?: string;
   pacienteId?: string;
   usuarioActual?: Usuario;
-  cargando=true;
+  cargando = true;
 
   constructor(
     private historiaService: HistoriaClinicaService,
@@ -42,22 +42,25 @@ export class CargarHistoriaClinicaComponent implements OnInit {
       campoDinamicoValor2: new FormControl(''),
       campoDinamicoClave3: new FormControl(''),
       campoDinamicoValor3: new FormControl(''),
-      resena: new FormControl('', Validators.required) // ✅ agregado aquí
+      adicionalSlider: new FormControl(50),
+      adicionalNumerico: new FormControl(null),
+      adicionalSwitch: new FormControl(false),
+      resena: new FormControl('', Validators.required)
     });
   }
 
   ngOnInit(): void {
-    this.cargando=true;
+    this.cargando = true;
     this.turnoId = this.route.snapshot.paramMap.get('turnoId') || '';
     this.pacienteId = this.route.snapshot.paramMap.get('pacienteId') || '';
     this.authService.getUserProfile()
       .then(usuario => this.usuarioActual = usuario)
       .catch(error => console.error('Error al cargar usuario:', error));
-    this.cargando=false;
+    this.cargando = false;
   }
 
   async finalizarTurno() {
-    this.cargando=true;
+    this.cargando = true;
     if (!this.pacienteId || !this.usuarioActual?.id || !this.turnoId) {
       Swal.fire({
         icon: 'error',
@@ -69,8 +72,8 @@ export class CargarHistoriaClinicaComponent implements OnInit {
 
     const form = this.historiaClinicaForm.value;
 
-    // Cargar dinámicamente los campos adicionales
     const datosAdicionales: { [clave: string]: any } = {};
+
     for (let i = 1; i <= 3; i++) {
       const clave = form[`campoDinamicoClave${i}`];
       const valor = form[`campoDinamicoValor${i}`];
@@ -78,6 +81,10 @@ export class CargarHistoriaClinicaComponent implements OnInit {
         datosAdicionales[clave] = valor;
       }
     }
+
+    datosAdicionales['Índice de salud'] = form.adicionalSlider;
+    datosAdicionales['Nivel de glucosa'] = form.adicionalNumerico;
+    datosAdicionales['Fumador'] = form.adicionalSwitch ? 'Sí' : 'No';
 
     const historia = {
       paciente_id: this.pacienteId,
@@ -89,14 +96,10 @@ export class CargarHistoriaClinicaComponent implements OnInit {
       presion: form.presion,
       datos_adicionales: datosAdicionales
     };
-    this.cargando=false;
-    try {
-      // 1. Guardar historia clínica
-      await this.historiaService.crearHistoriaClinica(historia);
 
-      // 2. Finalizar turno con reseña (tomada del form)
+    try {
+      await this.historiaService.crearHistoriaClinica(historia);
       await this.turnoService.finalizarTurno(this.turnoId, form.resena);
-      console.log('Reseña enviada:', form.resena);
 
       Swal.fire({
         icon: 'success',
@@ -113,5 +116,6 @@ export class CargarHistoriaClinicaComponent implements OnInit {
       });
     }
 
+    this.cargando = false;
   }
 }

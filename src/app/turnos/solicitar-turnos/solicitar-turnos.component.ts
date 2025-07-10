@@ -13,11 +13,12 @@ import { Usuario } from '../../shared/models/usuario.model';
 import { Horario } from '../../shared/models/horario.model';
 import { Turno } from '../../shared/models/turno';
 import { SpinnerDirective } from '../../shared/directives/spinner.directive';
+import { CaptchaDirective } from '../../shared/directives/captcha.directive';
 
 @Component({
   selector: 'app-solicitar-turnos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule,SpinnerDirective],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule,SpinnerDirective,CaptchaDirective],
   templateUrl: './solicitar-turnos.component.html',
   styleUrls: ['./solicitar-turnos.component.scss'],
 })
@@ -26,6 +27,8 @@ export class SolicitarTurnoComponent implements OnInit {
   pacienteSeleccionado?: Usuario;
   esAdmin = false;
   cargando=true;
+  esCaptchaValido: boolean = false;
+  mostrarCaptcha = true;
 
   especialidades: any[] = [];
   especialistas: Usuario[] = [];
@@ -61,7 +64,7 @@ export class SolicitarTurnoComponent implements OnInit {
   }
 
 
-  /** Genera 15 fechas YYYY-MM-DD en hora local */
+
   generarProximosDias() {
     const hoy = new Date();
     this.diasProximos = [];
@@ -75,31 +78,30 @@ export class SolicitarTurnoComponent implements OnInit {
     }
   }
 
-  /** Cuando elijo una especialidad */
+
   async onEspecialidadChange() {
     this.diaSeleccionado = '';
     this.horaSeleccionada = '';
     this.horariosDisponibles = [];
 
-    // si ya hay especialista, regeneramos días
+
     if (this.especialistaSeleccionado) {
       await this.generarDiasConTurnosDisponibles();
     }
   }
 
-  /** Cuando elijo un especialista */
+
   async onEspecialistaChange() {
     this.diaSeleccionado = '';
     this.horaSeleccionada = '';
     this.horariosDisponibles = [];
-    // 🚀 traer especialidades del especialista
     this.especialidades = await firstValueFrom(
       this.especialidadService.obtenerEspecialidadesPorEspecialista(this.especialistaSeleccionado!.id)
     );
     await this.generarDiasConTurnosDisponibles();
   }
 
-  /** Cuando pulso sobre un día */
+
   async onDiaSeleccionado(diaStr: string) {
     this.diaSeleccionado = diaStr;
 
@@ -119,22 +121,17 @@ export class SolicitarTurnoComponent implements OnInit {
     );
   }
 
-  /**
-   * Calcula las franjas horarias disponibles:
-   * - convierte `diaStr` a Date local
-   * - filtra horarios por día y especialidad
-   * - build slots evitando horas ocupadas
-   */
+
   calcularSlotsParaDia(
     diaStr: string,
     horarios: Horario[],
     turnosOcupados: Turno[]
   ): string[] {
-    // parseo local de la fecha
+
     const [año, mes, dia] = diaStr.split('-').map((v) => Number(v));
     const fechaLocal = new Date(año, mes - 1, dia);
 
-    // nombre del día en local
+
     const diasSemana = [
       'Domingo',
       'Lunes',
@@ -146,7 +143,6 @@ export class SolicitarTurnoComponent implements OnInit {
     ];
     const nombreDia = diasSemana[fechaLocal.getDay()];
 
-    // horas ya ocupadas
     const horasOcupadas = turnosOcupados.map((t) =>
       new Date(t.fecha).toTimeString().slice(0, 5)
     );
@@ -173,7 +169,7 @@ export class SolicitarTurnoComponent implements OnInit {
     return slots;
   }
 
-  /** Prepara `diasProximos` filtrando sólo fechas con slots > 0 */
+
   async generarDiasConTurnosDisponibles() {
     if (!this.especialistaSeleccionado) {
       this.diasProximos = [];
@@ -208,9 +204,6 @@ export class SolicitarTurnoComponent implements OnInit {
     }
   }
 
-    /**
-   * Dada una cadena 'YYYY-MM-DD', devuelve el nombre del día en español.
-   */
   obtenerNombreDia(fecha: string): string {
     const dias = [
       'Domingo',
@@ -222,7 +215,6 @@ export class SolicitarTurnoComponent implements OnInit {
       'Sábado',
     ];
     const [año, mes, dia] = fecha.split('-').map(Number);
-    // Creamos la fecha en local, sin desfase UTC
     const d = new Date(año, mes - 1, dia);
     return dias[d.getDay()];
   }
@@ -240,7 +232,7 @@ export class SolicitarTurnoComponent implements OnInit {
   }
 
   async reservarTurno() {
-    this.cargando=true;
+    
     if (!this.diaSeleccionado || !this.horaSeleccionada) {
       Swal.fire('Faltan datos', 'Por favor seleccioná día y horario.', 'error');
       return;
@@ -256,14 +248,18 @@ export class SolicitarTurnoComponent implements OnInit {
     } else {
       paciente = await this.authService.getUserProfile();
     }
+    if (this.mostrarCaptcha && !this.esCaptchaValido) 
+      {
+      Swal.fire('Captcha incorrecto', 'Resuelva el captcha antes de continuar.', 'warning');
+      return;
+    }
+    this.cargando=true;
 
-    // armo ISO en UTC desde local
+    
     const [año, mes, dia] = this.diaSeleccionado.split('-').map(Number);
     const [hh, mm] = this.horaSeleccionada.split(':').map(Number);
     const fechaLocal = new Date(año, mes - 1, dia, hh, mm);
     const iso = fechaLocal.toISOString();
-
-    this.cargando=false;
 
     try {
       await this.turnosService.crearTurno({
@@ -281,5 +277,6 @@ export class SolicitarTurnoComponent implements OnInit {
     } catch (e: any) {
       Swal.fire('Error', 'No se pudo reservar el turno.', 'error');
     }
+    this.cargando=false;
   }
 }

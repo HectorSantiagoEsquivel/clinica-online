@@ -1,7 +1,8 @@
-<div class="contenedor"[appSpinner]="cargando">
+<div class="contenedor" [appSpinner]="cargando">
   <h2 class="titulo">Cargar Historia Clínica</h2>
 
   <form [formGroup]="historiaClinicaForm" (ngSubmit)="finalizarTurno()" class="formulario">
+
     <div class="campo">
       <label>Altura (cm):</label>
       <input type="number" formControlName="altura" />
@@ -41,15 +42,34 @@
       </div>
     </div>
 
+    <h3 class="subtitulo">Controles especiales</h3>
+
     <div class="campo">
-    <label>Reseña del turno:</label>
-    <textarea
+      <label>Índice de salud (0–100): {{ historiaClinicaForm.value.adicionalSlider }}</label>
+      <input type="range" formControlName="adicionalSlider" min="0" max="100" />
+    </div>
+
+    <div class="campo">
+      <label>Nivel de glucosa:</label>
+      <input type="number" formControlName="adicionalNumerico" />
+    </div>
+
+    <div class="campo switch-campo">
+      <label>¿Fumador?</label>
+      <label class="switch">
+        <input type="checkbox" formControlName="adicionalSwitch" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="campo">
+      <label>Reseña del turno:</label>
+      <textarea
         formControlName="resena"
         rows="4"
         placeholder="Observaciones generales, diagnóstico, etc.">
-    </textarea>
+      </textarea>
     </div>
-
 
     <button type="submit" [disabled]="historiaClinicaForm.invalid" class="btn-finalizar">
       Finalizar turno y guardar historia clínica

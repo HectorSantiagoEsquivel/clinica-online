@@ -75,6 +75,16 @@
     </select>
   </div>
 
+  <div *ngIf="horaSeleccionada && mostrarCaptcha">
+    <label>Verificación:</label>
+    <input
+      type="text"
+      appCaptcha
+      (captchaValido)="esCaptchaValido = $event"
+      placeholder="Ingresá el resultado"
+    />
+  </div>
+
   <!-- RESERVAR -->
   <div class="reservar-turno" *ngIf="horaSeleccionada">
     <button (click)="reservarTurno()">Reservar turno</button>
