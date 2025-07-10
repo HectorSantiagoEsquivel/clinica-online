@@ -1,49 +1,67 @@
-<!-- Botón de exportar PDF -->
-<div class="flex justify-end mb-4"[appSpinner]="cargando">
-  <button 
-    (click)="generarPdfDesdeTurnos()" 
+<!-- Bloque filtro + descargar -->
+<div class="flex justify-between items-end mb-4" [appSpinner]="cargando">
+  <!-- Select de profesionales -->
+  <div>
+    <label for="prof-select" class="block font-semibold mb-1">Filtrar por profesional</label>
+    <select
+      id="prof-select"
+      [(ngModel)]="profesionalSeleccionado"
+      (ngModelChange)="onProfesionalChange()"
+      class="input-control"
+    >
+      <option [ngValue]="null">— Todos —</option>
+      <option
+        *ngFor="let prof of profesionales"
+        [ngValue]="prof.id"
+      >
+        {{ prof.nombre }} {{ prof.apellido }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Botón PDF -->
+  <button
+    (click)="generarPdfDesdeTurnos()"
     class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"
+    [disabled]="turnosFiltrados.length === 0"
   >
     Descargar historia clínica en PDF
   </button>
 </div>
 
-<!-- Lista de turnos -->
-<div *ngFor="let turno of turnos" class="mb-6">
-  <ng-container *ngIf="turno.historiaClinica">
-    
-    <!-- Aplicamos clase historia-card aquí -->
+<!-- Lista de turnos filtrados -->
+<div *ngFor="let turno of turnosFiltrados" class="mb-6">
+  <ng-container *ngIf="turno.historiaClinica as hc">
     <div class="historia-card">
-      
-      <!-- Encabezado: Datos del turno -->
-      <h3 class="text-lg font-semibold mb-2">Turno de {{ turno.fecha | date }}</h3>
+      <h3 class="text-lg font-semibold mb-2">
+        Turno de {{ turno.fecha | date }}
+      </h3>
       <p><strong>Especialidad:</strong> {{ turno.especialidad?.nombre || '—' }}</p>
-      <p><strong>Especialista:</strong> {{ turno.especialista?.nombre }} {{ turno.especialista?.apellido }}</p>
-
+      <p>
+        <strong>Especialista:</strong>
+        {{ turno.especialista?.nombre || '—' }}
+        {{ turno.especialista?.apellido || '' }}
+      </p>
       <hr class="my-3" />
+      <p><strong>Altura:</strong> {{ hc.altura }} cm</p>
+      <p><strong>Peso:</strong> {{ hc.peso }} kg</p>
+      <p><strong>Temperatura:</strong> {{ hc.temperatura }} °C</p>
+      <p><strong>Presión:</strong> {{ hc.presion || '—' }}</p>
 
-      <!-- Datos clínicos -->
-      <p><strong>Altura:</strong> {{ turno.historiaClinica.altura }} cm</p>
-      <p><strong>Peso:</strong> {{ turno.historiaClinica.peso }} kg</p>
-      <p><strong>Temperatura:</strong> {{ turno.historiaClinica.temperatura }} °C</p>
-      <p><strong>Presión:</strong> {{ turno.historiaClinica.presion }}</p>
-
-      <!-- Campos adicionales -->
-      <div *ngIf="turno.historiaClinica?.datos_adicionales && getClavesAdicionales(turno.historiaClinica).length > 0" class="mt-2">
+      <div *ngIf="getClavesAdicionales(hc).length > 0" class="mt-2">
         <p class="font-semibold">Campos adicionales:</p>
         <ul class="list-disc list-inside">
-          <li *ngFor="let clave of getClavesAdicionales(turno.historiaClinica)">
-            {{ clave }}: {{ turno.historiaClinica?.datos_adicionales?.[clave] }}
+          <li *ngFor="let clave of getClavesAdicionales(hc)">
+            {{ clave }}: {{ hc.datos_adicionales![clave] }}
           </li>
         </ul>
       </div>
 
-      <!-- Reseña -->
       <div class="mt-4">
-        <p class="font-semibold">Reseña del turno:</p>
+        <p class="font-semibold">Reseña médica:</p>
         <p>{{ turno.resena || '—' }}</p>
       </div>
     </div>
-
   </ng-container>
+
 </div>

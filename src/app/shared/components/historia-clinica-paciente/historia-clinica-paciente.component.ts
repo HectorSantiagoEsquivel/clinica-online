@@ -35,6 +35,11 @@ export class HistoriaClinicaPacienteComponent implements OnInit {
   nombrePaciente: string = '';
   cargando: boolean = true;
 
+  profesionales: { id: string; nombre: string; apellido: string }[] = [];
+
+  profesionalSeleccionado: string | null = null;
+  turnosFiltrados: Turno[] = [];
+
   objectKeys = Object.keys;
 
   constructor(
@@ -45,7 +50,7 @@ export class HistoriaClinicaPacienteComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-async ngOnInit() {
+  async ngOnInit() {
     try {
       let paciente: Usuario | null = null;
       const pacienteId = this.route.snapshot.paramMap.get('pacienteId');
@@ -64,7 +69,7 @@ async ngOnInit() {
       this.usuarioActual = paciente;
       this.nombrePaciente = `${paciente.nombre} ${paciente.apellido}`;
 
-
+      // Cargas originales
       const historias = await this.historiaService.obtenerHistoriaPorPaciente(paciente.id);
       const turnos = await this.turnosService.obtenerTurnosFiltrados({ pacienteId: paciente.id });
 
@@ -72,27 +77,22 @@ async ngOnInit() {
       const especialidades = new Map<string, string>();
 
       for (const turno of turnos) {
-    
         if (!usuarios.has(turno.especialistaId)) {
           const especialista = await this.authService.obtenerUsuarioPorId(turno.especialistaId);
           usuarios.set(turno.especialistaId, especialista);
         }
-
 
         if (!especialidades.has(turno.especialidadId)) {
           const especialidad = await this.especialidadService.obtenerEspecialidadPorId(turno.especialidadId);
           especialidades.set(turno.especialidadId, especialidad.nombre);
         }
 
-      
-        const especialista = usuarios.get(turno.especialistaId);
-        turno.especialista = especialista ? { nombre: especialista.nombre, apellido: especialista.apellido } : undefined;
+        const especialista = usuarios.get(turno.especialistaId)!;
+        turno.especialista = { nombre: especialista.nombre, apellido: especialista.apellido };
 
-        
-        const nombreEspecialidad = especialidades.get(turno.especialidadId);
-        turno.especialidad = nombreEspecialidad ? { nombre: nombreEspecialidad } : undefined;
+        const nombreEspecialidad = especialidades.get(turno.especialidadId)!;
+        turno.especialidad = { nombre: nombreEspecialidad };
 
-      
         turno.paciente = {
           nombre: paciente.nombre,
           apellido: paciente.apellido
@@ -110,7 +110,11 @@ async ngOnInit() {
         }
       }
 
+      // ← Aquí viene lo nuevo:
       this.turnos = turnos;
+      this.turnosFiltrados = [...this.turnos];   // inicializamos el filtrado
+      this.extraerProfesionales();               // llenamos el dropdown
+
     } catch (error) {
       console.error('Error al cargar historias clínicas:', error);
     } finally {
@@ -118,8 +122,32 @@ async ngOnInit() {
     }
   }
 
+  private extraerProfesionales() {
+    const map = new Map<string, { id: string; nombre: string; apellido: string }>();
+    for (const t of this.turnos) {
+      if (t.especialistaId && t.especialista) {
+        map.set(t.especialistaId, {
+          id: t.especialistaId,
+          nombre: t.especialista.nombre,
+          apellido: t.especialista.apellido
+        });
+      }
+    }
+    this.profesionales = Array.from(map.values());
+  }
+
   getClavesAdicionales(historia: any): string[] {
     return historia.datos_adicionales ? Object.keys(historia.datos_adicionales) : [];
+  }
+
+  onProfesionalChange() {
+    if (this.profesionalSeleccionado) {
+      this.turnosFiltrados = this.turnos.filter(
+        t => t.especialistaId === this.profesionalSeleccionado
+      );
+    } else {
+      this.turnosFiltrados = [...this.turnos];
+    }
   }
 
   async generarPdfDesdeTurnos() {
@@ -146,7 +174,7 @@ async ngOnInit() {
     doc.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, pageWidth / 2, 48, { align: 'center' });
     
     let y = 70;
-    const turnosConHistoria = this.turnos.filter(t => t.historiaClinica);
+    const turnosConHistoria = this.turnosFiltrados.filter(t => t.historiaClinica);
     
 
     const sectionStyle = {
