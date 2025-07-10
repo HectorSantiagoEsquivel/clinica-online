@@ -8,7 +8,7 @@ import { Usuario } from '../../shared/models/usuario.model';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { SpinnerDirective } from '../../shared/directives/spinner.directive';
 import { CapitalizarPrimeraLetraPipe } from '../../shared/pipes/capitalizarPrimeraLetra';
-import { CapitalizarInputDirective } from '../../shared/directives/capitalizar-input.directive';
+
 import { EspecialidadService } from '../../shared/services/especialidad.service';
 import Swal from 'sweetalert2';
 
@@ -21,8 +21,7 @@ import Swal from 'sweetalert2';
     CapitalizarPrimeraLetraPipe,
     CommonModule,
     RecaptchaModule,
-    SpinnerDirective,
-    CapitalizarInputDirective
+    SpinnerDirective
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']

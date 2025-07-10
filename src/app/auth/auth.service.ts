@@ -218,18 +218,30 @@ export class AuthService {
   // -------------------------------------------------------------------
   async cargarImagenesPerfil(usuario: Usuario): Promise<Usuario> {
     const carpetaUsuario = `usuarios/${usuario.id}-${usuario.nombre}`;
-    const { data: urlPerfil } = this.supabase.client.storage
-      .from('imagenes')
-      .getPublicUrl(`${carpetaUsuario}/imagen1.png`);
-    const { data: urlExtra } = this.supabase.client.storage
-      .from('imagenes')
-      .getPublicUrl(`${carpetaUsuario}/imagen2.png`);
+    const storage = this.supabase.client.storage.from('imagenes');
+
+    const { data: urlPerfil } = storage.getPublicUrl(`${carpetaUsuario}/imagen1.png`);
+    const { data: urlExtra } = storage.getPublicUrl(`${carpetaUsuario}/imagen2.png`);
+
+    // Verificar si imagen2 realmente existe
+    let imagenExtraValida: string | undefined;
+    try {
+      const { data: archivo } = await storage.list(carpetaUsuario);
+      const existeImagen2 = archivo?.some(f => f.name === 'imagen2.png');
+      if (existeImagen2) {
+        imagenExtraValida = urlExtra.publicUrl;
+      }
+    } catch (e) {
+      console.warn('No se pudo verificar imagen2:', e);
+    }
+
     return {
       ...usuario,
       imagen_perfil: urlPerfil.publicUrl,
-      imagen_extra: urlExtra.publicUrl
+      imagen_extra: imagenExtraValida,
     };
   }
+
 
   // -------------------------------------------------------------------
   // 7) Obtener sesión puntual (si la necesitas)

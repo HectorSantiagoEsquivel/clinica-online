@@ -7,6 +7,7 @@ import { MisHorariosEspecialistaComponent } from '../../turnos/mis-horarios-espe
 import { HistoriaClinicaPacienteComponent } from './historia-clinica-paciente/historia-clinica-paciente.component';
 import { SpinnerDirective } from '../directives/spinner.directive';
 import { firstValueFrom } from 'rxjs';
+import { AlternarImagenDirective } from '../directives/alternar-imagen.directive';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -15,7 +16,8 @@ import { firstValueFrom } from 'rxjs';
     CommonModule,
     SpinnerDirective,
     MisHorariosEspecialistaComponent,
-    HistoriaClinicaPacienteComponent
+    HistoriaClinicaPacienteComponent,
+    AlternarImagenDirective
   ],
   templateUrl: './mi-perfil.component.html',
   styleUrls: ['./mi-perfil.component.scss'],

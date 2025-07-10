@@ -12,16 +12,10 @@
     <div class="perfil-card" *ngIf="usuario">
       <div class="imagenes">
         <img
+          
           class="img-perfil"
-          *ngIf="usuario.imagen_perfil"
-          [src]="usuario.imagen_perfil"
+          [appAlternarImagen]="[usuario.imagen_perfil, usuario.imagen_extra]"
           alt="Imagen de perfil"
-        />
-        <img
-          class="img-extra"
-          *ngIf="usuario.imagen_extra"
-          [src]="usuario.imagen_extra"
-          alt=""
         />
       </div>
 
