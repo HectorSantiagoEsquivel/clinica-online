@@ -11,6 +11,10 @@
       (click)="tabActiva = 'crear'"
     >Crear usuario</button>
   </div>
+
+  <button type="button" class="btn-descargar" (click)="descargarExcel()" [disabled]="cargando">
+    Descargar Excel
+  </button>
   <!-- Lista de usuarios -->
   <div *ngIf="tabActiva === 'lista'">
     <h2 class="text-xl font-bold mb-4">Usuarios registrados</h2>
@@ -35,8 +39,11 @@
               <button *ngIf="usuario.rol === 'especialista'" class="btn btn-sm" (click)="cambiarVerificacion(usuario)">
                 {{ usuario.verificado ? 'Desverificar' : 'Verificar' }}
               </button>
-              <button class="btn btn-sm bg-green-500" (click)="verHistoria(usuario)">
+              <button *ngIf="usuario.rol === 'paciente'" class="btn btn-sm bg-blue-600"  (click)="verHistoria(usuario)">
                 Ver historia
+              </button>
+              <button *ngIf="usuario.rol === 'paciente'" class="btn btn-sm bg-blue-600" (click)="descargarTurnosPaciente(usuario)" [disabled]="cargando">
+                Descargar turnos
               </button>
             </td>
           </tr>

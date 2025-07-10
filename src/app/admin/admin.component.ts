@@ -3,9 +3,16 @@ import { FormBuilder, FormGroup, Validators, FormArray, FormsModule, ReactiveFor
 import { AdminService } from './admin.service';
 import { Usuario } from '../shared/models/usuario.model';
 import { AuthService } from '../auth/auth.service';
+import { TurnosService } from '../shared/services/turno.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { SpinnerDirective } from '../shared/directives/spinner.directive';
+import { Turno } from '../shared/models/turno';
+import * as ExcelJS from 'exceljs';
+import * as FileSaver from 'file-saver';
+
+
 
 @Component({
   selector: 'app-admin',
@@ -29,6 +36,7 @@ export class AdminComponent implements OnInit {
     private fb: FormBuilder,
     private adminService: AdminService,
     private authService: AuthService,
+    private turnoService:TurnosService,
     private router: Router
   ) {}
 
@@ -171,4 +179,95 @@ export class AdminComponent implements OnInit {
   verHistoria(usuario: Usuario) {
     this.router.navigate(['/historia-clinica', usuario.id]);
   }
+  async descargarExcel() {
+      this.cargando = true;
+      try {
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Usuarios');
+
+
+        worksheet.columns = [
+          { header: 'ID', key: 'id', width: 25 },
+          { header: 'Nombre', key: 'nombre', width: 20 },
+          { header: 'Apellido', key: 'apellido', width: 20 },
+          { header: 'DNI', key: 'dni', width: 15 },
+          { header: 'Email', key: 'email', width: 30 },
+          { header: 'Rol', key: 'rol', width: 15 },
+          { header: 'Verificado', key: 'verificado', width: 10 },
+          { header: 'Obra Social', key: 'obra_social', width: 20 },
+          { header: 'Fecha Registro', key: 'fecha_registro', width: 20 }
+        ];
+
+
+        this.usuarios.forEach(usuario => {
+          worksheet.addRow({
+            id: usuario.id,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            dni: usuario.dni,
+            email: usuario.email,
+            rol: usuario.rol,
+            verificado: usuario.verificado ? 'Sí' : 'No',
+            obra_social: usuario.obra_social || '',
+            fecha_registro: usuario.fecha_registro || ''
+          });
+        });
+
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        FileSaver.saveAs(new Blob([buffer]), 'usuarios.xlsx');
+      } catch (error: any) {
+        this.errorMsg = 'Error al generar el Excel: ' + error.message;
+      } finally {
+        this.cargando = false;
+      }
+    }
+  async descargarTurnosPaciente(usuario: Usuario) {
+    this.cargando = true;
+    this.errorMsg = '';
+    try {
+      // Convertir el observable a promesa para usar async/await
+      const turnos = await firstValueFrom(
+        this.turnoService.obtenerTurnosPorUsuario(usuario.id, 'pacienteId')
+      );
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Turnos');
+
+      worksheet.columns = [
+        { header: 'Fecha', key: 'fecha', width: 15 },
+        { header: 'Hora', key: 'hora', width: 10 },
+        { header: 'Estado', key: 'estado', width: 15 },
+        { header: 'Especialista', key: 'especialista', width: 25 },
+        { header: 'Especialidad', key: 'especialidad', width: 20 },
+        { header: 'Calificación', key: 'calificacion', width: 15 },
+        { header: 'Reseña', key: 'resena', width: 30 },
+      ];
+
+      turnos.map((t: Turno) => {
+        worksheet.addRow({
+          fecha: t.fecha,
+          hora: t.hora,
+          estado: t.estado,
+          especialista: t.especialista ? `${t.especialista.nombre} ${t.especialista.apellido}` : '',
+          especialidad: t.especialidad ? t.especialidad.nombre : '',
+          calificacion: t.calificaAtencion ?? '',
+          resena: t.resena ?? ''
+        });
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      FileSaver.saveAs(new Blob([buffer]), `turnos_${usuario.nombre}_${usuario.apellido}.xlsx`);
+
+    } catch (error: any) {
+      this.errorMsg = 'Error al descargar turnos: ' + error.message;
+    } finally {
+      this.cargando = false;
+    }
+  }
+
+  
+
+
 }

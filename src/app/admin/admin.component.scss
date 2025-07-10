@@ -70,6 +70,31 @@ h2, h3 {
   overflow-x: auto;
   border-radius: $border-radius;
 }
+.btn-descargar {
+  background-color: $secondary-color;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  border-radius: $border-radius;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: $transition;
+  box-shadow: 0 4px 12px rgba(0, 150, 136, 0.3);
+  display: inline-block;
+  margin-bottom: 1rem;
+
+  &:hover:not(:disabled) {
+    background-color: darken($secondary-color, 12%);
+    box-shadow: 0 6px 16px rgba(0, 150, 136, 0.5);
+  }
+
+  &:disabled {
+    background-color: lighten($secondary-color, 40%);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
 
 table {
   width: 100%;
