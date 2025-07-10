@@ -52,7 +52,6 @@ export class SolicitarTurnoComponent implements OnInit {
     this.cargando = true;
     this.especialidades = [];
     this.especialistas = await this.authService.traerUsuariosPorPerfil('especialista');
-    this.generarProximosDias();
     const user = await this.authService.getUserProfile();
     this.esAdmin = user.rol === 'admin';
 
@@ -98,7 +97,7 @@ export class SolicitarTurnoComponent implements OnInit {
     this.especialidades = await firstValueFrom(
       this.especialidadService.obtenerEspecialidadesPorEspecialista(this.especialistaSeleccionado!.id)
     );
-    await this.generarDiasConTurnosDisponibles();
+    this.diasProximos = [];
   }
 
 
