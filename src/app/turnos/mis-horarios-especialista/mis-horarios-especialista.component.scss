@@ -32,39 +32,37 @@ $transition: all 0.3s ease;
       background: $secondary-color;
     }
   }
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: #f2f2f2;
+    padding: 0.5rem;
+    border-radius: 999px;
 
-  /* Tabs arriba */
-.tabs {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  justify-content: center;
+    button {
+      padding: 0.6rem 1.4rem;
+      border: none;
+      background: transparent;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition;
 
-  button {
-    background: #f0f0f0;
-    border: 2px solid transparent;
-    padding: 0.6rem 1.5rem;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: $transition, transform 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      &.active {
+        background-color: $secondary-color;
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
 
-    &.active {
-      background: $secondary-color;
-      color: white;
-      border-color: $secondary-color;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    &:hover {
-      transform: scale(1.05);
-      background: lighten($secondary-color, 20%);
-      color: white;
+      &:hover:not(.active) {
+        background-color: lighten($secondary-color, 20%);
+        color: white;
+      }
     }
   }
-}
 
 
   /* Formulario para agregar horario */

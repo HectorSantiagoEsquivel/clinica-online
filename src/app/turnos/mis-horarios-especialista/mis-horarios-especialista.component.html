@@ -1,48 +1,54 @@
-<!-- Tabs -->
-<div class="tabs">
-  <button [class.active]="tabActiva === 'listar'" (click)="tabActiva = 'listar'">Mis horarios</button>
-  <button [class.active]="tabActiva === 'agregar'" (click)="tabActiva = 'agregar'">Agregar horario</button>
-</div>
+<section class="listado">
+  <!-- Tabs -->
+  <div class="tabs">
+    <button [class.active]="tabActiva === 'listar'" (click)="tabActiva = 'listar'">
+      Mis horarios
+    </button>
+    <button [class.active]="tabActiva === 'agregar'" (click)="tabActiva = 'agregar'">
+      Agregar horario
+    </button>
+  </div>
 
-<!-- Sección para listar horarios -->
-<section class="listado" *ngIf="tabActiva === 'listar'">
-  <div class="turnos-horizontal">
-    <div class="card" *ngFor="let horario of horarios; let i = index">
-      <div class="card-header">
-        {{ horario.dia }} - {{ horario.especialidad }}
-      </div>
-      <div class="card-body">
-        <p><strong>Desde:</strong> {{ horario.horaInicio }}</p>
-        <p><strong>Hasta:</strong> {{ horario.horaFin }}</p>
-        <p><strong>Cada:</strong> {{ horario.duracion }} min</p>
-        <button (click)="eliminarHorario(i)">Eliminar</button>
+  <!-- Sección para listar horarios -->
+  <div *ngIf="tabActiva === 'listar'">
+    <div class="turnos-horizontal">
+      <div class="card" *ngFor="let horario of horarios; let i = index">
+        <div class="card-header">
+          {{ horario.dia }} - {{ horario.especialidad }}
+        </div>
+        <div class="card-body">
+          <p><strong>Desde:</strong> {{ horario.horaInicio }}</p>
+          <p><strong>Hasta:</strong> {{ horario.horaFin }}</p>
+          <p><strong>Cada:</strong> {{ horario.duracion }} min</p>
+          <button (click)="eliminarHorario(i)">Eliminar</button>
+        </div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- Sección para agregar horario -->
-<section class="listado" *ngIf="tabActiva === 'agregar'">
-  <div class="filtro">
-    <label>Día</label>
-    <select [(ngModel)]="nuevoHorario.dia">
-      <option *ngFor="let dia of diasSemana" [value]="dia">{{ dia }}</option>
-    </select>
+  <!-- Sección para agregar horario -->
+  <div *ngIf="tabActiva === 'agregar'">
+    <div class="filtro">
+      <label>Día</label>
+      <select [(ngModel)]="nuevoHorario.dia">
+        <option *ngFor="let dia of diasSemana" [value]="dia">{{ dia }}</option>
+      </select>
 
-    <label>Especialidad</label>
-    <select [(ngModel)]="nuevoHorario.especialidad">
-      <option *ngFor="let especialidad of especialidades" [value]="especialidad">{{ especialidad }}</option>
-    </select>
+      <label>Especialidad</label>
+      <select [(ngModel)]="nuevoHorario.especialidad">
+        <option *ngFor="let especialidad of especialidades" [value]="especialidad">{{ especialidad }}</option>
+      </select>
 
-    <label>Hora inicio</label>
-    <input type="time" [(ngModel)]="nuevoHorario.horaInicio">
+      <label>Hora inicio</label>
+      <input type="time" [(ngModel)]="nuevoHorario.horaInicio" />
 
-    <label>Hora fin</label>
-    <input type="time" [(ngModel)]="nuevoHorario.horaFin">
+      <label>Hora fin</label>
+      <input type="time" [(ngModel)]="nuevoHorario.horaFin" />
 
-    <label>Duración (minutos)</label>
-    <input type="number" [(ngModel)]="nuevoHorario.duracion" min="5" step="5">
+      <label>Duración (minutos)</label>
+      <input type="number" [(ngModel)]="nuevoHorario.duracion" min="5" step="5" />
 
-    <button (click)="agregarHorario()">+ Añadir horario</button>
+      <button (click)="agregarHorario()">+ Añadir horario</button>
+    </div>
   </div>
 </section>

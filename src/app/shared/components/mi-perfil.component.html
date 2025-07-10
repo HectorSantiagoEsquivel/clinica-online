@@ -1,10 +1,32 @@
 <section class="perfil" [appSpinner]="cargando">
   <h2>Mi Perfil</h2>
 
-  <!-- Tabs solo para paciente -->
-  <div *ngIf="usuario?.rol === 'paciente'" class="tabs">
-    <button (click)="tabActivo = 'perfil'" [class.active]="tabActivo === 'perfil'">Perfil</button>
-    <button (click)="tabActivo = 'historia'" [class.active]="tabActivo === 'historia'">Historia Clínica</button>
+  <!-- Tabs dinámicos según rol -->
+  <div class="tabs-container">
+    <div class="tabs">
+      <button
+        (click)="tabActivo = 'perfil'"
+        [class.active]="tabActivo === 'perfil'"
+      >
+        Perfil
+      </button>
+
+      <button
+        *ngIf="usuario?.rol === 'paciente'"
+        (click)="tabActivo = 'historia'"
+        [class.active]="tabActivo === 'historia'"
+      >
+        Historia Clínica
+      </button>
+
+      <button
+        *ngIf="usuario?.rol === 'especialista'"
+        (click)="tabActivo = 'horarios'"
+        [class.active]="tabActivo === 'horarios'"
+      >
+        Mis Horarios
+      </button>
+    </div>
   </div>
 
   <!-- TAB: Perfil -->
@@ -21,27 +43,33 @@
       <div class="datos">
         <p><strong>Nombre:</strong> {{ usuario.nombre }} {{ usuario.apellido }}</p>
         <p><strong>Email:</strong> {{ usuario.email }}</p>
-        <p><strong>DNI:</strong> {{ usuario.dni | formatoDni}}</p>
+        <p><strong>DNI:</strong> {{ usuario.dni | formatoDni }}</p>
         <p><strong>Edad:</strong> {{ usuario.fecha_nacimiento! | edad }}</p>
         <p><strong>Rol:</strong> {{ usuario.rol | capitalizarPrimeraLetra }}</p>
 
         <p *ngIf="usuario.rol === 'paciente' && usuario.obra_social">
-          <strong>Obra social:</strong> {{ usuario.obra_social }}</p>
+          <strong>Obra social:</strong> {{ usuario.obra_social }}
+        </p>
 
         <div *ngIf="usuario.rol === 'especialista' && especialidades.length">
           <p><strong>Especialidades:</strong></p>
           <ul>
-            <li *ngFor="let esp of especialidades">{{ esp.nombre | capitalizarPrimeraLetra }}</li>
+            <li *ngFor="let esp of especialidades">
+              {{ esp.nombre | capitalizarPrimeraLetra }}
+            </li>
           </ul>
         </div>
       </div>
     </div>
-
-    <app-mis-horarios-especialista *ngIf="usuario?.rol === 'especialista'"></app-mis-horarios-especialista>
   </div>
 
   <!-- TAB: Historia Clínica -->
-  <div *ngIf="tabActivo === 'historia'">
+  <div *ngIf="tabActivo === 'historia' && usuario?.rol === 'paciente'">
     <app-historia-clinica-paciente></app-historia-clinica-paciente>
+  </div>
+
+  <!-- TAB: Mis Horarios -->
+  <div *ngIf="tabActivo === 'horarios' && usuario?.rol === 'especialista'">
+    <app-mis-horarios-especialista></app-mis-horarios-especialista>
   </div>
 </section>

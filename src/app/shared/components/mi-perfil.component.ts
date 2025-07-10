@@ -31,7 +31,7 @@ import { FormatoDniPipe } from '../pipes/formatoDNI';
 export class MiPerfilComponent implements OnInit {
   usuario?: Usuario | null;
   especialidades: { id: string; nombre: string }[] = [];
-  tabActivo: 'perfil' | 'historia' = 'perfil';
+  tabActivo: 'perfil' | 'historia' | 'horarios' = 'perfil';
   cargando = false;
 
   constructor(

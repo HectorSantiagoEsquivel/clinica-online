@@ -60,4 +60,38 @@
       }
     }
   }
+  .tabs-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      background: #f2f2f2;
+      padding: 0.5rem;
+      border-radius: 999px;
+
+      button {
+        padding: 0.5rem 1.2rem;
+        border: none;
+        background: transparent;
+        font-size: 1rem;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        &.active {
+          background-color: #4f46e5; // azul-violeta
+          color: white;
+          font-weight: 500;
+        }
+
+        &:hover:not(.active) {
+          background-color: #ddd;
+        }
+      }
+    }
+  }
+
 }
