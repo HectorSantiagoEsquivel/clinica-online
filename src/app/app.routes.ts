@@ -21,6 +21,7 @@ import { HistoriaClinicaPacienteComponent } from './shared/components/historia-c
 import { AdminReportesComponent } from './admin/admin-reportes/admin-reportes.component';
 
 export const routes: Routes = [
+
   {
     path: '',
     component: LoginComponent,
@@ -43,19 +44,19 @@ export const routes: Routes = [
     path: 'esperando-verificacion',
     component: EsperandoVerificacionComponent,
     canActivate: [authGuard, NoVerificadoGuard],
-    data: { animation: 'esperando-verificacion' }
+    data: { animation: 'esperando-verificacion' } 
   },
   {
     path: 'home',
     component: MiPerfilComponent,
     canActivate: [authGuard, VerificadoGuard],
-    data: { animation: 'mi-perfil' }
+    data: { animation: 'mi-perfil' } 
   },
   {
     path: 'administracion',
     component: AdminComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['admin'], animation: 'administracion' }
+    data: { roles: ['admin'], animation: 'administracion' } 
   },
   {
     path: 'mis-turnos-especialista',
@@ -73,31 +74,31 @@ export const routes: Routes = [
     path: 'solicitar-turnos',
     component: SolicitarTurnoComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['admin', 'paciente'], animation: 'solicitar-turnos' }
+    data: { roles: ['admin', 'paciente'], animation: 'solicitar-turnos' } 
   },
   {
     path: 'cargar-historia/:turnoId/:pacienteId',
     component: CargarHistoriaClinicaComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['especialista'], animation: 'cargar-historia' }
+    data: { roles: ['especialista'], animation: 'cargar-historia' } 
   },
   {
     path: 'historia-clinica/:pacienteId',
     component: HistoriaClinicaPacienteComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['especialista','admin'], animation: 'historia-clinica' }
+    data: { roles: ['especialista', 'admin'], animation: 'historia-clinica' }
   },
   {
     path: 'turnos-admin',
     component: TurnosAdminComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['admin'], animation: 'turnos-admin' }
+    data: { roles: ['admin'], animation: 'turnos-admin' } 
   },
   {
     path: 'estadisticas',
     component: AdminReportesComponent,
     canActivate: [authGuard, VerificadoGuard, RoleGuard],
-    data: { roles: ['admin'], animation: 'estadisticas' }
+    data: { roles: ['admin'], animation: 'estadisticas' } 
   },
   {
     path: 'pacientes-atendidos',
